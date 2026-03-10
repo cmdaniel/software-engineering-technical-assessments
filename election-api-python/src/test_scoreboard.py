@@ -6,9 +6,9 @@ from server import app, controller
 
 class TestScoreboard(unittest.TestCase):
 
-    def __init__(self, methodName: str = ...) -> None:
+    def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-        self.server = app.test_client(self)
+        self.server = app.test_client()
         file_dir: str = os.path.dirname(os.path.realpath(__file__))
         self.RESULT_SAMPLE_PATH: str = f"{file_dir}/resources/sample-election-results"
 
@@ -16,12 +16,13 @@ class TestScoreboard(unittest.TestCase):
         file_number: str = str(num).zfill(3)
         with open(f"{self.RESULT_SAMPLE_PATH}/result{file_number}.json", "r", encoding="utf-8") as file:
             result = file.read()
-        return self.server.post("/result", json=json.loads(result))
+        response = self.server.post("/result", json=json.loads(result))
+        return json.loads(response.data.decode("utf-8"))
 
     def load_results(self, quantity: int) -> list[dict]:
         results = []
         for i in range(quantity):
-            results.append(self.load_and_post_result_file(i + 1))
+            results.append(self.load_and_post_result_file(str(i + 1)))
         return results
 
     def fetch_scoreboard(self) -> tuple[int, dict]: # returns (status_code, response_body_object)
