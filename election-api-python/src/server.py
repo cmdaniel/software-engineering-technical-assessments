@@ -1,11 +1,17 @@
 from flask import Flask, request
 from results_controller import ResultsController
+# DM: Middleware registration helper for simulated auth checks.
+from auth_middleware import register_auth_middleware, register_rate_limit_middleware
 
 app: Flask = Flask(__name__)
 controller: ResultsController = ResultsController()
+# DM: Attach auth middleware globally to all incoming requests.
+register_auth_middleware(app)
+# DM: Enforce per-client request throttling across all routes.
+register_rate_limit_middleware(app)
 
 @app.route("/result/<identifier>", methods=["GET"])
-def individual_result(identifier) -> dict:
+def individual_result(identifier) -> str | dict:
     return controller.get_result(int(identifier))
 
 @app.route("/result", methods=["POST"])
