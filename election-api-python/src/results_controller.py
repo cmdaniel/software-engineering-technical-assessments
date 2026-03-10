@@ -1,9 +1,11 @@
 from results_service import ResultStore
+from DM_policy_engine import FirstPastThePostPolicyEngine
 
 class ResultsController:
 
     def __init__(self) -> None:
         self.result_store: ResultStore = ResultStore()
+        self.policy_engine = FirstPastThePostPolicyEngine()
 
     def get_result(self, identifier: int) -> str | dict:
         return self.result_store.get_result(identifier)
@@ -16,5 +18,5 @@ class ResultsController:
         self.result_store.reset()
 
     def scoreboard(self) -> dict:
-        # Left blank for you to fill in
-        return {}
+        parameters = self.policy_engine.build_parameters(self.result_store.get_all())
+        return parameters.to_dict()

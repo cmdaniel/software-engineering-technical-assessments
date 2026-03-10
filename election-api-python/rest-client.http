@@ -1,0 +1,46 @@
+@host = http://localhost:3000
+@auth = Bearer demo-token
+@claims = role=producer;region=uk
+
+### Add first election result (POST /result)
+POST {{host}}/result
+Content-Type: application/json
+Authorization: {{auth}}
+X-Claims: {{claims}}
+
+{
+  "id": 1,
+  "constituencyId": 90,
+  "party": "LAB",
+  "votes": 34021,
+  "share": 52.1
+}
+
+### Add second election result (POST /result)
+POST {{host}}/result
+Content-Type: application/json
+Authorization: {{auth}}
+X-Claims: {{claims}}
+
+{
+  "id": 2,
+  "constituencyId": 90,
+  "party": "CON",
+  "votes": 20210,
+  "share": 31.0
+}
+
+### Get result by id (GET /result/{id})
+GET {{host}}/result/1
+Authorization: {{auth}}
+X-Claims: {{claims}}
+
+### Get result by id - not found example
+GET {{host}}/result/999
+Authorization: {{auth}}
+X-Claims: {{claims}}
+
+### Get running scoreboard (GET /scoreboard)
+GET {{host}}/scoreboard
+Authorization: {{auth}}
+X-Claims: {{claims}}
