@@ -39,6 +39,9 @@ class TestScoreboard(unittest.TestCase):
 
         self.assertEqual(status_code, 200, f"non-200 status code received: {status_code}")
         self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(scoreboard["LD"], 1, f"expected LD to have 1 seat, but got {scoreboard['LD']}")
+        self.assertEqual(scoreboard["LAB"], 4, f"expected LAB to have 4 seats, but got {scoreboard['LAB']}")
+        self.assertEqual(scoreboard["winner"], "noone", f"expected winner to be noone, but got {scoreboard['winner']}")
         # assert LD == 1
 		# assert LAB = 4
 		# assert winner = noone
@@ -49,6 +52,10 @@ class TestScoreboard(unittest.TestCase):
 
         self.assertEqual(status_code, 200, f"non-200 status code received: {status_code}")
         self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(scoreboard["LD"], 12, f"expected LD to have 12 seats, but got {scoreboard['LD']}")
+        self.assertEqual(scoreboard["LAB"], 56, f"expected LAB to have 56 seats, but got {scoreboard['LAB']}")
+        self.assertEqual(scoreboard["CON"], 31, f"expected CON to have 31 seats, but got {scoreboard['CON']}")
+        self.assertEqual(scoreboard["winner"], "noone", f"expected winner to be noone, but got {scoreboard['winner']}")
         # assert LD == 12
 		# assert LAB == 56
 		# assert CON == 31
@@ -60,6 +67,10 @@ class TestScoreboard(unittest.TestCase):
 
         self.assertEqual(status_code, 200, f"non-200 status code received: {status_code}")
         self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(scoreboard["LD"], 52, f"expected LD to have 52 seats, but got {scoreboard['LD']}")
+        self.assertEqual(scoreboard["LAB"], 325, f"expected LAB to have 325 seats, but got {scoreboard['LAB']}")
+        self.assertEqual(scoreboard["CON"], 167, f"expected CON to have 167 seats, but got {scoreboard['CON']}")
+        self.assertEqual(scoreboard["winner"], "LAB", f"expected winner to be LAB, but got {scoreboard['winner']}")
         # assert LD == 52
 		# assert LAB = 325
 		# assert CON = 167
@@ -71,6 +82,11 @@ class TestScoreboard(unittest.TestCase):
 
         self.assertEqual(status_code, 200, f"non-200 status code received: {status_code}")
         self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(scoreboard["LD"], 62, f"expected LD to have 62 seats, but got {scoreboard['LD']}")
+        self.assertEqual(scoreboard["LAB"], 349, f"expected LAB to have 349 seats, but got {scoreboard['LAB']}")
+        self.assertEqual(scoreboard["CON"], 210, f"expected CON to have 210 seats, but got {scoreboard['CON']}")
+        self.assertEqual(scoreboard["winner"], "LAB", f"expected winner to be LAB, but got {scoreboard['winner']}")
+        self.assertEqual(scoreboard["sum"], 650, f"expected sum to be 650, but got {scoreboard['sum']}")
         # assert LD == 62
 		# assert LAB == 349
 		# assert CON == 210
