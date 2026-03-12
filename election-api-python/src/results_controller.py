@@ -6,13 +6,11 @@ from dataclasses import dataclass
 import pandas as pd
 import matplotlib.pyplot as plt
 
-
 @dataclass
 class PartyResult:
     party: str
     votes: int
     share: int
-
 
 @dataclass
 class Result:
@@ -20,7 +18,6 @@ class Result:
     name: str
     seqNo: int
     partyResults: list[PartyResult]
-
 
 @dataclass
 class FlatResult:
@@ -30,7 +27,6 @@ class FlatResult:
     party: str
     votes: int
     share: int
-
 
 class ResultsController:
 
@@ -64,67 +60,6 @@ class ResultsController:
 
     def reset(self) -> None:
         self.result_store.reset()
-
-    def exploded_normalised_results(
-        self, result: list[dict] | str
-    ) -> None | pd.DataFrame:
-        """
-        Create a pandas dataframe from the result and performe
-        explode -> normalise -> groupby operations to get the
-        total votes for each party in the result
-        """
-        # Create a pandas dataframe from the result
-        df = pd.DataFrame(result) if isinstance(result, list) else pd.DataFrame()
-        # partyResults is an array of objects that we want to explode into separate rows, preserving the { id, name and seqNo }.
-        df_exploded = df.explode("partyResults", ignore_index=True)
-        # partyResults column is now a series of dictionaries we want to normalise into separate columns form party, votes and share.
-        df_normalised = pd.json_normalize(df_exploded.pop("partyResults").tolist())
-        df_exploded = pd.concat([df_exploded, df_normalised], axis=1)
-        return df_exploded if len(df_exploded) > 0 else None
-
-    def exploded_normalised_grouped_results(
-        self, result: list[dict] | str, group_by: str
-    ) -> None | DataFrameGroupBy:
-        """
-        Create a pandas datafram from the result and performe
-        explode -> normalise -> groupby operations to get the
-        total votes for each party in the result
-        """
-        df_exploded_normalised = pd.DataFrame(self.exploded_normalised_results(result))
-        df_grouped = df_exploded_normalised.groupby(group_by)
-        return df_grouped if len(df_grouped) > 0 else None
-
-    def transform(self, result: list[dict] | str) -> None | pd.DataFrame:
-        """
-        Create a pandas dataframe from the result and performe
-        explode -> normalise operations to get the total votes for each party in the result
-        """
-        df_exploded_normalised = pd.DataFrame(self.exploded_normalised_results(result))
-        return df_exploded_normalised if len(df_exploded_normalised) > 0 else None
-
-    def group_by_party(self, result: list[dict] | str) -> None | DataFrameGroupBy:
-        """
-        Create a pandas dataframe from the result and performe
-        explode -> normalise -> groupby operations to get the total votes for each party in the result
-        """
-        df_exploded_normalised = pd.DataFrame(self.exploded_normalised_results(result))
-        df_grouped = df_exploded_normalised.groupby("party")
-        return df_grouped if len(df_grouped) > 0 else None
-
-    def reducer_seats_by_party(self, result: list[dict] | str) -> dict:
-        try:
-            df_exploded_normalised = self.exploded_normalised_results(result)
-            if df_exploded_normalised is None:
-                return {}
-            grouped_by_constituency = df_exploded_normalised.groupby("id")
-            winning_parties = grouped_by_constituency.apply(
-                lambda group: group.loc[group["votes"].idxmax(), "party"]
-            )
-            seats_by_party = winning_parties.value_counts().to_dict()
-            return seats_by_party
-        except KeyError as ex:
-            print(f"Key error: {ex}")
-            return {}
 
     def scoreboard(self) -> dict:
         results = self.get_result_all()
