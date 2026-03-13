@@ -316,5 +316,31 @@
       "    for child in parent[\"${8:items}\"]",
       "]"
     ]
+  },
+  "21-Transform | Map Dictionary To Object With Optional Subitems": {
+    "scope": "python",
+    "prefix": [
+      "group-transform",
+      "map-dict-to-object",
+      "dict-to-object-subitems",
+      "map-items-subitems",
+      "object-mapper-simple"
+    ],
+    "description": "[Transform] Map dictionaries into objects and optionally map nested subitems with generic names.",
+    "body": [
+      "${1:mapped_items} = (",
+      "    [",
+      "        ${2:ParentModel}(",
+      "            ${3:id}=item[\"${3:id}\"],",
+      "            ${4:name}=item[\"${4:name}\"],",
+      "            ${5:subitems}=[${6:SubModel}(**subitem) for subitem in item.get(\"${5:subitems}\", [])],",
+      "        )",
+      "        for item in ${7:raw_items}",
+      "    ]",
+      "    if isinstance(${7:raw_items}, list)",
+      "    else []",
+      ")",
+      "return ${1:mapped_items}"
+    ]
   }
 }

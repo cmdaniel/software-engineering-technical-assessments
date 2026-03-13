@@ -8,7 +8,6 @@ from model import Party
 
 
 class TestScoreboard(unittest.TestCase):
-
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
         self.server = app.test_client(use_cookies=True)
