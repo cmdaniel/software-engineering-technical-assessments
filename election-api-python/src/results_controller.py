@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from matplotlib import pyplot as plt
 from results_service import ResultStore
 from model import (
     Party,
@@ -11,6 +12,7 @@ from model import (
 from collections import defaultdict
 from collections.abc import Callable
 from typing import Any
+import pandas as pd
 
 
 class PayloadingError(Exception):
@@ -30,6 +32,7 @@ class ScoreboardContext:
     grouped_party: dict[str, list[FlatResult]] = field(default_factory=dict)
     party_result: dict[str, dict[str, int | float]] = field(default_factory=dict)
     total_shares: float = 0.0
+    df_results: pd.DataFrame = field(default_factory=pd.DataFrame)
 
 
 class ResultsController:
@@ -106,9 +109,11 @@ class ResultsController:
         context.party_result = {
             party: {
                 "votes": votes,
-                "share": round(votes / context.total_votes * 100, 2)
-                if context.total_votes
-                else 0,
+                "share": (
+                    round(votes / context.total_votes * 100, 2)
+                    if context.total_votes
+                    else 0
+                ),
             }
             for party, items in context.grouped_party.items()
             for votes in [sum(item.votes for item in items)]
@@ -119,6 +124,22 @@ class ResultsController:
         context.total_shares = sum(
             item["share"] for item in context.party_result.values()
         )
+        return context
+
+    def convert_to_df(self, context: ScoreboardContext) -> ScoreboardContext:
+        df = pd.DataFrame(context.party_result)
+        context.df_results = df
+        return context
+
+    def plot_chart(self, context: ScoreboardContext) -> ScoreboardContext:
+        totals = context.result_dict
+        plt.bar(range(len(totals)), list(totals.values()))
+        plt.xticks(range(len(totals)), [str(key) for key in totals.keys()])
+        plt.xlabel("Category")
+        plt.ylabel("Value")
+        plt.title("Bar Chart")
+        plt.show()
+
         return context
 
     def format_scoreboard(self, context: ScoreboardContext) -> dict:
@@ -139,6 +160,8 @@ class ResultsController:
                 self.compute_winner,
                 self.compute_party_result,
                 self.compute_total_shares,
+                self.convert_to_df,
+                self.plot_chart,
                 self.format_scoreboard,
             )
 
