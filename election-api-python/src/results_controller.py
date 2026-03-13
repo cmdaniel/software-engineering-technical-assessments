@@ -165,6 +165,9 @@ class ResultsController:
                 self.format_scoreboard,
             )
 
+        except PayloadingError as err:
+            print(err)
+            pass
         except AttributeError as err:
             print(err)
             pass
