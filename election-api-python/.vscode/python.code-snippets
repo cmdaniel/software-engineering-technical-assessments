@@ -316,5 +316,25 @@
       "    for child in parent[\"${8:items}\"]",
       "]"
     ]
+  },
+  "22-Transform | Dataclass | ContextResult": {
+    "scope": "python",
+    "prefix": [
+      "group-transform",
+      "contextresult",
+      "contextresult-dataclass",
+      "scoreboard-context"
+    ],
+    "description": "[Transform] ContextResult dataclass with default_factory fields.",
+    "body": [
+      "@dataclass()",
+      "class ContextResult:",
+      "    results: list[Result] = field(default_factory=list)",
+      "    flattened_results: list[FlatResult] = field(default_factory=list)",
+      "    groupped_by_party: defaultdict[str, list[FlatResult]] = field(",
+      "        default_factory=lambda: defaultdict(list)",
+      "    )",
+      "    scoreboard: dict = field(default_factory=dict)"
+    ]
   }
 }
