@@ -292,5 +292,29 @@
       "finally:",
       "    ${21:cleanup_resources()}"
     ]
+  },
+  "20-Transform | Flatten Dictionary Into Object": {
+    "scope": "python",
+    "prefix": [
+      "group-transform",
+      "flatten-dict-to-object",
+      "flatten-dict-object",
+      "flatten-items",
+      "dict-to-flat-object"
+    ],
+    "description": "[Transform] Flatten nested dictionary/list items into flat objects using a two-level comprehension.",
+    "body": [
+      "# Flatten nested child items into one flat object per child.",
+      "${1:flat_results}: list[${2:FlatModel}] = [",
+      "    ${2:FlatModel}(",
+      "        ${3:id}=parent[\"${3:id}\"],",
+      "        ${4:name}=parent[\"${4:name}\"],",
+      "        ${5:item_id}=child[\"${5:item_id}\"],",
+      "        ${6:item_name}=child[\"${6:item_name}\"],",
+      "    )",
+      "    for parent in ${7:results}",
+      "    for child in parent[\"${8:items}\"]",
+      "]"
+    ]
   }
 }
