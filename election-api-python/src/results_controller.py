@@ -1,32 +1,15 @@
 from dataclasses import dataclass
 from results_service import ResultStore
-from model import Party, MIN_VOTES
+from model import (
+    Party,
+    MIN_VOTES,
+    PartyResult,
+    FlatResult,
+    Result,
+    map_results,
+    flat_results,
+)
 from collections import defaultdict
-
-@dataclass()
-class PartyResult:
-    party: str
-    votes: int
-    share: int
-
-
-@dataclass()
-class Result:
-    id: int
-    name: str
-    seqNo: int
-    partyResults: list[PartyResult]
-
-
-@dataclass()
-class FlatResult:
-    id: int
-    name: str
-    seqNo: int
-    party: str
-    votes: int
-    share: int
-    seat_winner_party: str
 
 
 class AppValidationError(Exception):
@@ -46,50 +29,11 @@ class ResultsController:
 
     def get_all(self) -> str | list[Result]:
         raw_items = self.store.get_all()
-        mapped_items = self.map_results(raw_items)
+        mapped_items = map_results(raw_items)
         return mapped_items
 
     def reset(self) -> None:
         self.store.reset()
-
-    def map_results(self, results: list[dict]) -> list[Result]:
-        mapped_items = (
-            [
-                Result(
-                    id=item["id"],
-                    name=item["name"],
-                    seqNo=item["seqNo"],
-                    partyResults=[
-                        PartyResult(**subitem)
-                        for subitem in item.get("partyResults", [])
-                    ],
-                )
-                for item in results
-            ]
-            if isinstance(results, list)
-            else []
-        )
-        return mapped_items
-
-    def flat_results(self, results: list[Result]) -> list[FlatResult]:
-        flat_results: list[FlatResult] = [
-            FlatResult(
-                id=parent.id,
-                name=parent.name,
-                seqNo=parent.seqNo,
-                party=child.party,
-                votes=child.votes,
-                share=child.share,
-                seat_winner_party=max(
-                    parent.partyResults,
-                    key=lambda item: item.votes,
-                    default=PartyResult(party="noone", votes=0, share=0),
-                ).party,
-            )
-            for parent in results
-            for child in parent.partyResults
-        ]
-        return flat_results
 
     def scoreboard(self) -> dict:
         try:
@@ -98,14 +42,16 @@ class ResultsController:
             if not payload or isinstance(payload, str):
                 raise AppValidationError("payload is required")
 
-            flat_results = self.flat_results(payload)
+            flatten_results = flat_results(payload)
 
-            grouped = defaultdict(list)
-            for item in flat_results:
+            grouped_winners = defaultdict(list)
+            for item in flatten_results:
                 if item.seat_winner_party == item.party:
-                    grouped[item.party].append(item)
+                    grouped_winners[item.party].append(item)
 
-            result_dict = {party: len(seats) for party, seats in grouped.items()}
+            result_dict = {
+                party: len(seats) for party, seats in grouped_winners.items()
+            }
             top_party, top_seats = max(
                 result_dict.items(), key=lambda item: item[1], default=("noone", 0)
             )
@@ -114,9 +60,32 @@ class ResultsController:
 
             winner = top_party if top_seats >= MIN_VOTES and not is_tied else "noone"
 
-            total_votes = sum(result_dict.values())
+            total_seats = sum(result_dict.values())
 
-            return {**result_dict, Party.WINNER: winner, Party.SUM: total_votes}
+            total_votes = sum(item.votes for item in flatten_results)
+
+            grouped_party = defaultdict(list)
+            for item in flatten_results:
+                grouped_party[item.party].append(item)
+
+            party_result = {
+                party: {
+                    "votes": sum(item.votes for item in items),
+                    "share": round(
+                        sum(item.votes for item in items) / total_votes * 100, 2
+                    ),
+                }
+                for party, items in grouped_party.items()
+            }
+
+            total_shares = sum(item["share"] for item in party_result.values())
+
+            return {
+                **result_dict,
+                Party.WINNER: winner,
+                Party.SUM: total_seats,
+                "party_result": party_result,
+            }
 
         except AttributeError as err:
             print(err)
