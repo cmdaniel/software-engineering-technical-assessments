@@ -1,18 +1,18 @@
 import unittest
 import json
 import os
-
+from werkzeug.test import TestResponse
 from server import app, controller
 
 class TestScoreboard(unittest.TestCase):
 
-    def __init__(self, methodName: str = ...) -> None:
+    def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
-        self.server = app.test_client(self)
+        self.server = app.test_client(use_cookies= True)
         file_dir: str = os.path.dirname(os.path.realpath(__file__))
         self.RESULT_SAMPLE_PATH: str = f"{file_dir}/resources/sample-election-results"
 
-    def load_and_post_result_file(self, num: str) -> dict:
+    def load_and_post_result_file(self, num: int) -> TestResponse:
         file_number: str = str(num).zfill(3)
         with open(f"{self.RESULT_SAMPLE_PATH}/result{file_number}.json", "r", encoding="utf-8") as file:
             result = file.read()
