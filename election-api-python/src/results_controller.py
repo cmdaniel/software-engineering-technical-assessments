@@ -13,7 +13,7 @@ from collections.abc import Callable
 from typing import Any
 
 
-class AppValidationError(Exception):
+class PayloadingError(Exception):
     """Raised when input validation fails."""
 
 
@@ -59,7 +59,7 @@ class ResultsController:
     def data_load(self) -> str | list[Result]:
         payload = self.get_all()
         if not payload or isinstance(payload, str):
-            raise AppValidationError("payload is required")
+            raise PayloadingError("payload is required")
         return payload
 
     def flatten_results(self, payload: list[Result]) -> list[FlatResult]:
