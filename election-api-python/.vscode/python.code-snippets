@@ -243,6 +243,38 @@
       "print(ctx.execute(${2:10}))"
     ]
   },
+  "07-Functional | Pipeline | Pipe Value Through Functions": {
+    "scope": "python",
+    "prefix": [
+      "group-functional",
+      "functional-pipeline",
+      "pipe-functions",
+      "function-pipeline",
+      "pythonic-pattern"
+    ],
+    "description": "[Functional] Pipeline: pass a value through a sequence of functions using a simple, explicit loop.",
+    "body": [
+      "from collections.abc import Callable",
+      "from typing import Any",
+      "",
+      "def ${1:pipe}(value: Any, *functions: Callable[[Any], Any]) -> Any:",
+      "    for function in functions:",
+      "        value = function(value)",
+      "    return value",
+      "",
+      "def ${2:strip_text}(s: str) -> str:",
+      "    return s.strip()",
+      "",
+      "def ${3:make_upper}(s: str) -> str:",
+      "    return s.upper()",
+      "",
+      "def ${4:add_exclamation}(s: str) -> str:",
+      "    return f\"{s}!\"",
+      "",
+      "result = ${1:pipe}(\"  hello world  \", ${2:strip_text}, ${3:make_upper}, ${4:add_exclamation})",
+      "print(result)  # HELLO WORLD!"
+    ]
+  },
   "90-ErrorHandling | Try Except | Common Native + Custom": {
     "scope": "python",
     "prefix": [
