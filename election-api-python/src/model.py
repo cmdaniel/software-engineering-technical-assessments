@@ -38,7 +38,7 @@ class Party(StrEnum):
     SUM = "SUM"
 
 
-def map_results(raw_items: list[dict]) -> list[Result]:
+def map_results(results: list[dict]) -> list[Result]:
     mapped_items = (
         [
             Result(
@@ -49,9 +49,9 @@ def map_results(raw_items: list[dict]) -> list[Result]:
                     PartyResult(**subitem) for subitem in item.get("partyResults", [])
                 ],
             )
-            for item in raw_items
+            for item in results
         ]
-        if isinstance(raw_items, list)
+        if isinstance(results, list)
         else []
     )
     return mapped_items
