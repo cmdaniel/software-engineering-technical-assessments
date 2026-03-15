@@ -76,7 +76,7 @@ def compute_party_seats(context: str | ContextResult) -> str | ContextResult:
     try:
 
         context.scoreboard.party_seats = dict(
-            Counter(str(item.winner_party) for item in context.constituencies)
+            Counter(item.winner_party for item in context.constituencies)
         )
 
         return context
