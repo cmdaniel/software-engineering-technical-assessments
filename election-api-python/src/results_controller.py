@@ -5,7 +5,7 @@ class ResultsController:
     def __init__(self) -> None:
         self.store: ResultStore = ResultStore()
     
-    def get_result(self, id: int) -> dict:
+    def get_result(self, id: int) -> str | dict:
         return self.store.get_result(id)
     
     def new_result(self, result: dict) -> dict:
