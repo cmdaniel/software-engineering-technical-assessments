@@ -1,4 +1,10 @@
-from domain.domain import ContextResult, map_constituencies
+from domain.domain import (
+    ContextResult,
+    compute_constituency_winner,
+    compute_party_seats,
+    map_constituencies,
+    transform_flat_constituencies,
+)
 from model.model import Party
 from results_service import ResultStore
 from typing import Any, Callable
@@ -23,7 +29,7 @@ class ResultsController:
         self.store.reset()
 
     @staticmethod
-    def pipe(value: Any, *functions: Callable[[Any], Any]) -> Any:
+    def pipe(value: Any, *functions: Callable[[Any], Any]) -> ContextResult:
         for function in functions:
             value = function(value)
         return value
@@ -34,9 +40,13 @@ class ResultsController:
 
     def scoreboard(self) -> dict:
 
-        result = self.pipe(
+        pipe_result = self.pipe(
             ContextResult(),
             self.load_data,
+            transform_flat_constituencies,
+            compute_constituency_winner,
+            compute_party_seats,
         )
 
-        return {Party.LD: 1, Party.LAB: 4, Party.winner: Party.noone}
+        return {**pipe_result.scoreboard.party_seats, Party.winner: Party.noone}
+        # return {Party.LD: 1, Party.LAB: 4, Party.winner: Party.noone}

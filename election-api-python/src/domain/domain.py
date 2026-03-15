@@ -1,14 +1,17 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from collections import Counter
 from model.log import logger
-from model.model import Constituency, PartyResult, Scoreboard
-from dataclasses import dataclass
+from model.model import Constituency, FlatConstituency, PartyResult, Scoreboard
 from typing import Any
 
 
 @dataclass(slots=True)
 class ContextResult:
-    constituencies: list[Constituency] = []
-    scoreboard: Scoreboard = Scoreboard()
+    constituencies: list[Constituency] = field(default_factory=list[Constituency])
+    scoreboard: Scoreboard = field(default_factory=Scoreboard)
+    flat_constituencies: list[FlatConstituency] = field(
+        default_factory=list[FlatConstituency]
+    )
 
 
 def map_constituencies(payload: str | list[dict[str, Any]]) -> list[Constituency]:
@@ -38,3 +41,40 @@ def map_constituencies(payload: str | list[dict[str, Any]]) -> list[Constituency
         logger.error(error_msg)
 
     return []
+
+
+def transform_flat_constituencies(context: ContextResult) -> ContextResult:
+    context.flat_constituencies = [
+        FlatConstituency(
+            id=parent.id,
+            name=parent.name,
+            seq_no=parent.seq_no,
+            party=child.party,
+            votes=child.votes,
+            share=child.share,
+        )
+        for parent in context.constituencies
+        for child in parent.party_results
+    ]
+    return context
+
+
+def compute_constituency_winner(context: ContextResult) -> ContextResult:
+
+    for constituency in context.constituencies:
+        constituency.winner_party = max(
+            constituency.party_results, key=lambda item: item.votes
+        ).party
+
+    return context
+
+
+def compute_party_seats(context: ContextResult) -> ContextResult:
+
+    context.scoreboard.party_seats = dict(
+        Counter(constituency.winner_party for constituency in context.constituencies)
+    )
+
+    return context
+
+
