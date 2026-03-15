@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from decimal import Decimal
-from enum import Enum
+from enum import StrEnum
 
 
-class PartyEnum(Enum):
+class Party(StrEnum):
     LAB = "LAB"
     CON = "CON"
     LD = "LD"
@@ -16,22 +16,22 @@ class PartyEnum(Enum):
     SUM = "sum"
 
 
-class PartyResultEnum(Enum):
+class PartyResultEnum(StrEnum):
     VOTES = "votes"
     SHARES = "shares"
 
 
 @dataclass
 class Scoreboard:
-    party_seats: dict[PartyEnum, int]
-    overall_winner: PartyEnum
-    party_result: dict[PartyEnum, dict[str, dict[PartyEnum, int | Decimal]]]
+    party_seats: dict[Party, int]
+    overall_winner: Party
+    party_result: dict[Party, dict[str, dict[Party, int | Decimal]]]
     is_tied: bool = False
 
 
 @dataclass
 class PartyResult:
-    party: PartyEnum
+    party: Party
     votes: int
     share: Decimal
 
@@ -49,6 +49,6 @@ class FlatConstituency:
     id: int
     name: str
     seqNo: int
-    party: PartyEnum
+    party: Party
     votes: int
     share: Decimal

@@ -1,7 +1,7 @@
 import unittest
 import json
 import os
-from model.model import PartyEnum
+from model.model import Party
 from server import app, controller
 from werkzeug.test import TestResponse
 
@@ -52,19 +52,19 @@ class TestScoreboard(unittest.TestCase):
             status_code, 200, f"Status Code should be 200, but get {status_code}"
         )
         self.assertEqual(
-            scoreboard[PartyEnum.LD],
+            scoreboard[Party.LD],
             1,
-            f"Should be LD == 1 but got {scoreboard[PartyEnum.LD]}",
+            f"Should be LD == 1 but got {scoreboard[Party.LD]}",
         )
         self.assertEqual(
-            scoreboard[PartyEnum.LAB],
+            scoreboard[Party.LAB],
             4,
-            f"Should be LAB == 4 but got {scoreboard[PartyEnum.LAB]}",
+            f"Should be LAB == 4 but got {scoreboard[Party.LAB]}",
         )
         self.assertEqual(
-            scoreboard[PartyEnum.WINNER],
-            PartyEnum.NOONE,
-            f"Should be winner = noone but got {scoreboard[PartyEnum.WINNER]}",
+            scoreboard[Party.WINNER],
+            Party.NOONE,
+            f"Should be winner = noone but got {scoreboard[Party.WINNER]}",
         )
 
     def test_first_100(self) -> None:
@@ -81,24 +81,24 @@ class TestScoreboard(unittest.TestCase):
             status_code, 200, f"Status Code should be 200, but get {status_code}"
         )
         self.assertEqual(
-            scoreboard[PartyEnum.LD],
+            scoreboard[Party.LD],
             12,
-            f" Should be LD == 12 but got {scoreboard[PartyEnum.LD]}",
+            f" Should be LD == 12 but got {scoreboard[Party.LD]}",
         )
         self.assertEqual(
-            scoreboard[PartyEnum.LAB],
+            scoreboard[Party.LAB],
             56,
-            f" Should be LAB == 56 but got {scoreboard[PartyEnum.LAB]}",
+            f" Should be LAB == 56 but got {scoreboard[Party.LAB]}",
         )
         self.assertEqual(
-            scoreboard[PartyEnum.CON],
+            scoreboard[Party.CON],
             31,
-            f" Should be CON == 31 but got {scoreboard[PartyEnum.CON]}",
+            f" Should be CON == 31 but got {scoreboard[Party.CON]}",
         )
         self.assertEqual(
-            scoreboard[PartyEnum.WINNER],
-            PartyEnum.NOONE,
-            f" Should be winner = noone but got {scoreboard[PartyEnum.WINNER]}",
+            scoreboard[Party.WINNER],
+            Party.NOONE,
+            f" Should be winner = noone but got {scoreboard[Party.WINNER]}",
         )
 
     def test_first_554(self) -> None:
@@ -115,24 +115,24 @@ class TestScoreboard(unittest.TestCase):
         )
         self.assertNotEqual(len(scoreboard), 0)
         self.assertEqual(
-            scoreboard[PartyEnum.LD],
+            scoreboard[Party.LD],
             52,
-            f"Should be LD == 52 but got {scoreboard[PartyEnum.LD]} ",
+            f"Should be LD == 52 but got {scoreboard[Party.LD]} ",
         )
         self.assertEqual(
-            scoreboard[PartyEnum.LAB],
+            scoreboard[Party.LAB],
             325,
-            f"Should be LAB == 325 but got {scoreboard[PartyEnum.LAB]} ",
+            f"Should be LAB == 325 but got {scoreboard[Party.LAB]} ",
         )
         self.assertEqual(
-            scoreboard[PartyEnum.CON],
+            scoreboard[Party.CON],
             167,
-            f"Should be CON == 167 but got {scoreboard[PartyEnum.CON]} ",
+            f"Should be CON == 167 but got {scoreboard[Party.CON]} ",
         )
         self.assertEqual(
-            scoreboard[PartyEnum.WINNER],
-            PartyEnum.LAB,
-            f"Should be winner == LAB but got {scoreboard[PartyEnum.WINNER]} ",
+            scoreboard[Party.WINNER],
+            Party.LAB,
+            f"Should be winner == LAB but got {scoreboard[Party.WINNER]} ",
         )
 
     def test_all_results(self) -> None:
@@ -150,29 +150,29 @@ class TestScoreboard(unittest.TestCase):
             status_code, 200, f"Status Code should be 200, but get {status_code}"
         )
         self.assertEqual(
-            scoreboard[PartyEnum.LD],
+            scoreboard[Party.LD],
             62,
-            f"Should by LD == 62 but got {scoreboard[PartyEnum.LD]}",
+            f"Should by LD == 62 but got {scoreboard[Party.LD]}",
         )
         self.assertEqual(
-            scoreboard[PartyEnum.LAB],
+            scoreboard[Party.LAB],
             349,
-            f"Should by LAB == 349 but got {scoreboard[PartyEnum.LAB]}",
+            f"Should by LAB == 349 but got {scoreboard[Party.LAB]}",
         )
         self.assertEqual(
-            scoreboard[PartyEnum.CON],
+            scoreboard[Party.CON],
             210,
-            f"Should by CON == 210 but got {scoreboard[PartyEnum.CON]}",
+            f"Should by CON == 210 but got {scoreboard[Party.CON]}",
         )
         self.assertEqual(
-            scoreboard[PartyEnum.WINNER],
-            PartyEnum.LAB,
-            f"Should by winner == LAB but got {scoreboard[PartyEnum.WINNER]}",
+            scoreboard[Party.WINNER],
+            Party.LAB,
+            f"Should by winner == LAB but got {scoreboard[Party.WINNER]}",
         )
         self.assertEqual(
-            scoreboard[PartyEnum.SUM],
+            scoreboard[Party.SUM],
             650,
-            f"Should by sum == 650 but got {scoreboard[PartyEnum.SUM]}",
+            f"Should by sum == 650 but got {scoreboard[Party.SUM]}",
         )
 
 

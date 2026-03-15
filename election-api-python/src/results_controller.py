@@ -1,5 +1,9 @@
-from model.model import PartyEnum
+from model.log import build_logger
+from model.model import Party
 from results_service import ResultStore
+
+logger = build_logger(__name__)
+logger.info("service started")
 
 
 class ResultsController:
@@ -15,8 +19,19 @@ class ResultsController:
 
     def reset(self) -> None:
         self.store.reset()
+        
+    
 
     def scoreboard(self) -> dict:
-        # Left blank for you to fill in
-        result = {PartyEnum.LD.value: 1, PartyEnum.LAB.value: 4, PartyEnum.WINNER.value: PartyEnum.NOONE.value}
-        return result
+        try:
+            logger.info("scoreboard started")
+
+            result = {Party.LD: 1, Party.LAB: 4, Party.WINNER: Party.NOONE}
+            logger.info("scoreboard succesfully generated")
+
+            return result
+
+        except Exception as ex:
+            logger.error(ex)
+
+        return {}
