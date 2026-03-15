@@ -1,232 +1,230 @@
 {
-  "01-DesignPattern | Adapter | Protocol Wrapper": {
+  "101-DesignPattern | Adapter | Protocol Wrapper": {
     "scope": "python",
     "prefix": [
       "group-designpattern",
-      "designpattern-adapter",
+      "template-adapter",
       "dp-adapter",
       "adapter-pattern",
-      "pythonic-pattern"
+      "protocol-wrapper"
     ],
-    "description": "[DesignPattern] Adapter: wrap legacy or third-party APIs behind a local Protocol to keep domain code decoupled.",
+    "description": "[Template][DesignPattern] Adapter: wrap legacy/third-party APIs behind a Protocol to keep domain code decoupled.",
     "body": [
-      "# Pattern: Adapter - convert an incompatible API into the interface your app expects.",
+      "# Pattern: Adapter — convert an incompatible API into the interface your app expects.",
       "from __future__ import annotations",
       "",
       "from dataclasses import dataclass",
       "from typing import Protocol",
       "",
-      "# Target interface your domain code depends on.",
+      "",
       "class Notifier(Protocol):",
+      "    \"\"\"Target interface your domain code depends on.\"\"\"",
+      "",
       "    def send(self, message: str) -> None: ...",
       "",
-      "# Existing dependency with a different method name/shape.",
+      "",
       "class ${1:LegacyClient}:",
+      "    \"\"\"Existing dependency with a different method name/shape.\"\"\"",
+      "",
       "    def publish(self, payload: str) -> None:",
       "        print(payload)",
       "",
-      "# Adapter maps Notifier.send(...) to LegacyClient.publish(...).",
+      "",
       "@dataclass(slots=True)",
       "class ${2:LegacyNotifierAdapter}:",
+      "    \"\"\"Maps Notifier.send → LegacyClient.publish.\"\"\"",
+      "",
       "    client: ${1:LegacyClient}",
       "",
       "    def send(self, message: str) -> None:",
       "        self.client.publish(message)",
       "",
-      "# Domain code remains unaware of the legacy implementation details.",
+      "",
       "def notify(notifier: Notifier, message: str) -> None:",
       "    notifier.send(message)",
       "",
-      "# Plug in adapter at the composition boundary.",
+      "",
       "notify(${2:LegacyNotifierAdapter}(client=${1:LegacyClient}()), ${3:\"hello\"})"
     ]
   },
-  "02-DesignPattern | Command | Callable Command": {
+  "102-DesignPattern | Command | Callable Command": {
     "scope": "python",
     "prefix": [
       "group-designpattern",
-      "designpattern-command",
+      "template-command",
       "dp-command",
       "command-pattern",
-      "pythonic-pattern"
+      "callable-command"
     ],
-    "description": "[DesignPattern] Command: model actions as callables for queueing, retries, scheduling, and cleaner orchestration.",
+    "description": "[Template][DesignPattern] Command: model actions as callables for queueing, retries, and scheduling.",
     "body": [
-      "# Pattern: Command - encapsulate an action as a callable object.",
+      "# Pattern: Command — encapsulate an action as a callable object.",
       "from __future__ import annotations",
       "",
       "from dataclasses import dataclass",
       "from typing import Protocol",
       "",
-      "# Shared contract allows command runners/queues to be generic.",
+      "",
       "class Command(Protocol):",
       "    def __call__(self) -> None: ...",
       "",
-      "# Concrete command stores all data needed for execution.",
+      "",
       "@dataclass(slots=True)",
       "class ${1:CreateUserCommand}:",
       "    username: str",
       "",
-      "    # Execute the command behavior.",
       "    def __call__(self) -> None:",
       "        print(f\"creating user {self.username}\")",
       "",
-      "# Invoker works with the abstraction, not a concrete command type.",
+      "",
       "def run(command: Command) -> None:",
       "    command()",
       "",
-      "# Composition point where concrete command is passed in.",
+      "",
       "run(${1:CreateUserCommand}(username=${2:\"alice\"}))"
     ]
   },
-  "03-DesignPattern | Decorator | Function Wrapper": {
+  "103-DesignPattern | Decorator | Function Wrapper": {
     "scope": "python",
     "prefix": [
       "group-designpattern",
-      "designpattern-decorator",
+      "template-decorator",
       "dp-decorator",
       "decorator-pattern",
-      "pythonic-pattern"
+      "function-wrapper"
     ],
-    "description": "[DesignPattern] Decorator: add cross-cutting behavior while preserving signatures with ParamSpec and wraps.",
+    "description": "[Template][DesignPattern] Decorator: add cross-cutting behavior while preserving signatures with ParamSpec.",
     "body": [
-      "# Pattern: Decorator - add behavior around a function without changing it.",
+      "# Pattern: Decorator — add behavior around a function without changing it.",
       "from __future__ import annotations",
       "",
       "from functools import wraps",
       "from typing import Callable, ParamSpec, TypeVar",
       "",
-      "# Keep original callable parameter and return types.",
       "P = ParamSpec(\"P\")",
       "R = TypeVar(\"R\")",
       "",
-      "# Decorator accepts a function and returns a wrapped function.",
+      "",
       "def ${1:logged}(func: Callable[P, R]) -> Callable[P, R]:",
-      "    # Preserve metadata like __name__ and __doc__.",
       "    @wraps(func)",
-      "    # Wrapper can inject cross-cutting behavior (logging, timing, auth).",
       "    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:",
       "        print(f\"calling {func.__name__}\")",
       "        return func(*args, **kwargs)",
       "",
       "    return wrapper",
       "",
-      "# Apply decorator declaratively.",
+      "",
       "@${1:logged}",
       "def ${2:add}(x: int, y: int) -> int:",
       "    return x + y",
       "",
-      "# Call site stays unchanged.",
+      "",
       "print(${2:add}(${3:2}, ${4:3}))"
     ]
   },
-  "04-DesignPattern | Factory | Function Factory": {
+  "104-DesignPattern | Factory | Function Factory": {
     "scope": "python",
     "prefix": [
       "group-designpattern",
-      "designpattern-factory",
+      "template-factory",
       "dp-factory",
       "factory-pattern",
-      "pythonic-pattern"
+      "factory-function"
     ],
-    "description": "[DesignPattern] Factory: centralize construction in a function to keep creation logic explicit and maintainable.",
+    "description": "[Template][DesignPattern] Factory: centralize construction in a function to keep creation logic explicit.",
     "body": [
-      "# Pattern: Factory - centralize object creation decisions in one place.",
+      "# Pattern: Factory — centralize object creation decisions in one place.",
       "from __future__ import annotations",
       "",
       "from dataclasses import dataclass",
       "from typing import Literal",
       "",
-      "# Concrete product type A.",
+      "",
       "@dataclass(slots=True)",
       "class ${1:JsonStore}:",
       "    path: str",
       "",
-      "# Concrete product type B.",
+      "",
       "@dataclass(slots=True)",
       "class ${2:MemoryStore}:",
       "    data: dict[str, str]",
       "",
-      "# Union exposes the factory return contract.",
+      "",
       "Store = ${1:JsonStore} | ${2:MemoryStore}",
       "",
-      "# Factory chooses which concrete implementation to build.",
+      "",
       "def create_store(kind: Literal[\"json\", \"memory\"]) -> Store:",
       "    if kind == \"json\":",
       "        return ${1:JsonStore}(path=${3:\"/tmp/data.json\"})",
       "    return ${2:MemoryStore}(data={})",
       "",
-      "# Client code depends on factory, not concrete constructor logic.",
+      "",
       "store = create_store(${4:\"json\"})"
     ]
   },
-  "05-DesignPattern | Observer | Lightweight PubSub": {
+  "105-DesignPattern | Observer | Lightweight PubSub": {
     "scope": "python",
     "prefix": [
       "group-designpattern",
-      "designpattern-observer",
+      "template-observer",
       "dp-observer",
       "observer-pattern",
       "pubsub-pattern",
-      "pythonic-pattern"
+      "event-bus"
     ],
-    "description": "[DesignPattern] Observer/PubSub: notify subscribers with callbacks using explicit, framework-free APIs.",
+    "description": "[Template][DesignPattern] Observer/PubSub: notify subscribers with callbacks, framework-free.",
     "body": [
-      "# Pattern: Observer/PubSub - publish events to many subscribers.",
+      "# Pattern: Observer/PubSub — publish events to many subscribers.",
       "from __future__ import annotations",
       "",
       "from dataclasses import dataclass, field",
       "from typing import Callable",
       "",
-      "# Event callback signature expected by the bus.",
       "EventHandler = Callable[[str], None]",
       "",
-      "# Event bus stores and notifies subscribers.",
+      "",
       "@dataclass(slots=True)",
       "class ${1:EventBus}:",
       "    _subscribers: list[EventHandler] = field(default_factory=list)",
       "",
-      "    # Register a listener for future events.",
       "    def subscribe(self, handler: EventHandler) -> None:",
       "        self._subscribers.append(handler)",
       "",
-      "    # Broadcast one event to all current listeners.",
       "    def publish(self, event: str) -> None:",
       "        for handler in self._subscribers:",
       "            handler(event)",
       "",
-      "# Example wiring and event emission.",
+      "",
       "bus = ${1:EventBus}()",
       "bus.subscribe(lambda e: print(f\"received: {e}\"))",
       "bus.publish(${2:\"user.created\"})"
     ]
   },
-  "06-DesignPattern | Strategy | Protocol Callable": {
+  "106-DesignPattern | Strategy | Protocol Callable": {
     "scope": "python",
     "prefix": [
       "group-designpattern",
-      "designpattern-strategy",
+      "template-strategy",
       "dp-strategy",
       "strategy-pattern",
-      "pythonic-pattern"
+      "strategy-protocol"
     ],
-    "description": "[DesignPattern] Strategy: swap algorithms at runtime with Protocol and first-class functions.",
+    "description": "[Template][DesignPattern] Strategy: swap algorithms at runtime with Protocol and first-class functions.",
     "body": [
-      "# Pattern: Strategy - switch algorithms without changing context code.",
+      "# Pattern: Strategy — switch algorithms without changing context code.",
       "from __future__ import annotations",
       "",
       "from dataclasses import dataclass",
-      "from typing import Protocol, TypeVar, Generic",
+      "from typing import Generic, Protocol, TypeVar",
       "",
-      "# Generic input/output types keep strategies reusable.",
       "InT = TypeVar(\"InT\", contravariant=True)",
       "OutT = TypeVar(\"OutT\", covariant=True)",
       "",
-      "# Strategy contract represented as a callable interface.",
+      "",
       "class Strategy(Protocol[InT, OutT]):",
       "    def __call__(self, value: InT) -> OutT: ...",
       "",
-      "# Context delegates work to injected strategy.",
+      "",
       "@dataclass(slots=True)",
       "class Context(Generic[InT, OutT]):",
       "    strategy: Strategy[InT, OutT]",
@@ -234,28 +232,510 @@
       "    def execute(self, value: InT) -> OutT:",
       "        return self.strategy(value)",
       "",
-      "# One concrete strategy implementation.",
+      "",
       "def ${1:double}(value: int) -> int:",
       "    return value * 2",
       "",
-      "# Compose context with strategy and execute.",
+      "",
       "ctx = Context[int, int](strategy=${1:double})",
       "print(ctx.execute(${2:10}))"
     ]
   },
-  "90-ErrorHandling | Try Except | Common Native + Custom": {
+  "107-DesignPattern | Policy Registry | Strategy + Factory + Registry": {
+    "scope": "python",
+    "prefix": [
+      "group-designpattern",
+      "template-policy",
+      "dp-policy",
+      "policy-registry",
+      "policy-factory",
+      "versioned-policy",
+      "strategy-abc"
+    ],
+    "description": "[Template][DesignPattern] Policy Registry: ABC strategy + factory + registry for versioned policies.",
+    "body": [
+      "# Pattern: Policy Registry — versioned strategies with singleton registry.",
+      "from __future__ import annotations",
+      "",
+      "from abc import ABC, abstractmethod",
+      "from dataclasses import dataclass, field",
+      "",
+      "",
+      "class ${1:PolicyStrategy}(ABC):",
+      "    @abstractmethod",
+      "    def evaluate(self, data: dict) -> bool:",
+      "        raise NotImplementedError",
+      "",
+      "",
+      "class ${2:PolicyV1}(${1:PolicyStrategy}):",
+      "    def evaluate(self, data: dict) -> bool:",
+      "        return data.get(\"${3:age}\", 0) >= ${4:18}",
+      "",
+      "",
+      "class ${5:PolicyV2}(${1:PolicyStrategy}):",
+      "    def evaluate(self, data: dict) -> bool:",
+      "        return data.get(\"${3:age}\", 0) >= ${6:21}",
+      "",
+      "",
+      "class ${7:PolicyFactory}:",
+      "    @staticmethod",
+      "    def create(version: str) -> ${1:PolicyStrategy}:",
+      "        if version == \"${8:v1}\":",
+      "            return ${2:PolicyV1}()",
+      "        if version == \"${9:v2}\":",
+      "            return ${5:PolicyV2}()",
+      "        raise ValueError(f\"Unknown policy version: {version}\")",
+      "",
+      "",
+      "@dataclass(slots=True)",
+      "class ${10:PolicyRegistry}:",
+      "    \"\"\"Singleton registry — each version is a separate strategy instance.\"\"\"",
+      "",
+      "    _policies: dict[str, ${1:PolicyStrategy}] = field(default_factory=dict)",
+      "",
+      "    def register(self, name: str, policy: ${1:PolicyStrategy}) -> None:",
+      "        self._policies[name] = policy",
+      "",
+      "    def get(self, name: str) -> ${1:PolicyStrategy}:",
+      "        return self._policies[name]",
+      "",
+      "",
+      "@dataclass(slots=True)",
+      "class ${11:PricingService}:",
+      "    policy: ${1:PolicyStrategy}",
+      "",
+      "    def process(self, data: dict) -> str:",
+      "        return \"approved\" if self.policy.evaluate(data) else \"rejected\"",
+      "",
+      "",
+      "registry = ${10:PolicyRegistry}()",
+      "registry.register(\"${8:v1}\", ${7:PolicyFactory}.create(\"${8:v1}\"))",
+      "service = ${11:PricingService}(policy=registry.get(\"${8:v1}\"))"
+    ]
+  },
+  "201-Transform | Flatten Dict → Typed Objects | Comprehension": {
+    "scope": "python",
+    "prefix": [
+      "group-transform",
+      "snippet-flatten-typed",
+      "flatten-dict-to-object",
+      "flatten-items",
+      "comprehension-flatten"
+    ],
+    "description": "[Snippet][Transform] Flatten nested dict/list items into typed flat objects via two-level comprehension.",
+    "body": [
+      "${1:flat_results}: list[${2:FlatModel}] = [",
+      "    ${2:FlatModel}(",
+      "        ${3:id}=parent[\"${3:id}\"],",
+      "        ${4:name}=parent[\"${4:name}\"],",
+      "        ${5:item_id}=child[\"${5:item_id}\"],",
+      "        ${6:item_name}=child[\"${6:item_name}\"],",
+      "    )",
+      "    for parent in ${7:results}",
+      "    for child in parent[\"${8:items}\"]",
+      "]"
+    ]
+  },
+  "202-Transform | Flatten List of Dict | chain.from_iterable": {
+    "scope": "python",
+    "prefix": [
+      "group-transform",
+      "snippet-flatten-chain",
+      "flatten-list-of-dict",
+      "chain-from-iterable",
+      "flatten-raw"
+    ],
+    "description": "[Snippet][Transform] Flatten nested item lists from dicts into one flat list with chain.from_iterable.",
+    "body": [
+      "from itertools import chain",
+      "",
+      "${1:flat_items} = list(chain.from_iterable(obj[\"${2:items}\"] for obj in ${3:data}))"
+    ]
+  },
+  "203-Transform | Group By | itertools.groupby": {
+    "scope": "python",
+    "prefix": [
+      "group-transform",
+      "snippet-groupby",
+      "groupby-itertools",
+      "itertools-groupby",
+      "groupby-sum"
+    ],
+    "description": "[Snippet][Transform] Sort then aggregate grouped dicts with itertools.groupby (requires pre-sorted input).",
+    "body": [
+      "from itertools import groupby",
+      "",
+      "${1:flat_items} = sorted(${2:flat_items}, key=lambda item: item[\"${3:k}\"])",
+      "",
+      "${4:grouped} = {",
+      "    key: sum(item[\"${5:v}\"] for item in group)",
+      "    for key, group in groupby(${1:flat_items}, key=lambda item: item[\"${3:k}\"])",
+      "}"
+    ]
+  },
+  "204-Transform | Group By | defaultdict (alt)": {
+    "scope": "python",
+    "prefix": [
+      "group-transform",
+      "snippet-groupby-defaultdict",
+      "defaultdict-aggregate",
+      "groupby-defaultdict",
+      "aggregate-defaultdict"
+    ],
+    "description": "[Snippet][Transform] Flatten + aggregate per key with defaultdict — no pre-sort needed (alt to itertools.groupby).",
+    "body": [
+      "from collections import defaultdict",
+      "from itertools import chain",
+      "",
+      "${1:flat_items} = chain.from_iterable(obj[\"${2:items}\"] for obj in ${3:data})",
+      "",
+      "${4:aggregates}: defaultdict[str, int] = defaultdict(int)",
+      "for item in ${1:flat_items}:",
+      "    ${4:aggregates}[item[\"${5:k}\"]] += item[\"${6:v}\"]",
+      "",
+      "${7:result} = dict(${4:aggregates})"
+    ]
+  },
+  "205-Transform | Reduce | functools.reduce": {
+    "scope": "python",
+    "prefix": [
+      "group-transform",
+      "snippet-reduce",
+      "functools-reduce",
+      "reduce-total",
+      "reduce-sum"
+    ],
+    "description": "[Snippet][Transform] Reduce a list of dicts into a single total with functools.reduce.",
+    "body": [
+      "from functools import reduce",
+      "",
+      "${1:total} = reduce(lambda acc, item: acc + item[\"${2:v}\"], ${3:flat_items}, ${4:0})"
+    ]
+  },
+  "206-Transform | JSON Normalize | pandas": {
+    "scope": "python",
+    "prefix": [
+      "group-transform",
+      "snippet-pandas-normalize",
+      "pandas-json-normalize",
+      "json-normalize",
+      "pandas-groupby"
+    ],
+    "description": "[Snippet][Transform] Normalize nested JSON with pandas and aggregate a column by group.",
+    "body": [
+      "import pandas as pd",
+      "",
+      "df = pd.json_normalize(${1:data}, record_path=\"${2:items}\", meta=[\"${3:id}\"])",
+      "${4:result} = df.groupby(\"${5:k}\")[\"${6:v}\"].sum()"
+    ]
+  },
+  "207-Transform | Aggregation Context Dataclass | default_factory": {
+    "scope": "python",
+    "prefix": [
+      "group-transform",
+      "snippet-aggregation-context",
+      "aggregation-context-dataclass",
+      "contextresult-dataclass",
+      "dataclass-default-factory"
+    ],
+    "description": "[Snippet][Transform] Aggregation context dataclass with default_factory fields for collected, flattened, grouped, and summarized data.",
+    "body": [
+      "from collections import defaultdict",
+      "from dataclasses import dataclass, field",
+      "",
+      "",
+      "@dataclass",
+      "class ${1:AggregationContext}:",
+      "    items: list[${2:Item}] = field(default_factory=list)",
+      "    flattened_items: list[${3:FlatItem}] = field(default_factory=list)",
+      "    grouped_by_key: defaultdict[str, list[${3:FlatItem}]] = field(",
+      "        default_factory=lambda: defaultdict(list)",
+      "    )",
+      "    summary: dict[str, int] = field(default_factory=dict)"
+    ]
+  },
+  "301-Collection | Sort | sorted + key": {
+    "scope": "python",
+    "prefix": [
+      "group-collection",
+      "snippet-sort",
+      "sort-list-of-dict",
+      "sorted-key",
+      "sort-lambda"
+    ],
+    "description": "[Snippet][Collection] Sort a list of dicts by one key with sorted(..., key=...).",
+    "body": [
+      "${1:sorted_items} = sorted(${2:items}, key=lambda item: item[\"${3:age}\"]${4:, reverse=False})"
+    ]
+  },
+  "302-Collection | Filter | filter + predicate": {
+    "scope": "python",
+    "prefix": [
+      "group-collection",
+      "snippet-filter",
+      "filter-list",
+      "filter-lambda",
+      "filter-predicate"
+    ],
+    "description": "[Snippet][Collection] Filter values with filter(...) and a lambda predicate.",
+    "body": [
+      "${1:result} = list(filter(lambda value: ${2:value % 2 == 0}, ${3:items}))"
+    ]
+  },
+  "303-Collection | Map | map + transform": {
+    "scope": "python",
+    "prefix": [
+      "group-collection",
+      "snippet-map",
+      "map-list",
+      "map-lambda",
+      "map-transform"
+    ],
+    "description": "[Snippet][Collection] Transform values with map(...) and a mapping function.",
+    "body": [
+      "${1:result} = list(map(lambda value: ${2:value * 2}, ${3:items}))"
+    ]
+  },
+  "401-String | Mask Email | PII": {
+    "scope": "python",
+    "prefix": [
+      "group-string",
+      "snippet-mask-email",
+      "mask-email",
+      "email-mask",
+      "obfuscate-email",
+      "pii-mask"
+    ],
+    "description": "[Snippet][String] Mask the local part of an email address while preserving the domain.",
+    "body": [
+      "def ${1:mask_email}(email: str) -> str:",
+      "    user, domain = email.split(\"@\", maxsplit=1)",
+      "    visible = ${2:2}",
+      "    return user[:visible] + \"*\" * max(len(user) - visible, 0) + \"@\" + domain"
+    ]
+  },
+  "501-Typing | Generic Identity | TypeVar": {
+    "scope": "python",
+    "prefix": [
+      "group-typing",
+      "snippet-identity",
+      "generic-identity",
+      "typevar-identity"
+    ],
+    "description": "[Snippet][Typing] Generic identity function using TypeVar.",
+    "body": [
+      "from typing import TypeVar",
+      "",
+      "${1:T} = TypeVar(\"${1:T}\")",
+      "",
+      "",
+      "def ${2:identity}(value: ${1:T}) -> ${1:T}:",
+      "    return value"
+    ]
+  },
+  "502-Typing | Generic Transform | Callable[[T], R]": {
+    "scope": "python",
+    "prefix": [
+      "group-typing",
+      "snippet-transform",
+      "generic-transform",
+      "typevar-callable",
+      "callable-transform"
+    ],
+    "description": "[Snippet][Typing] Generic transform function parameterized by input T and output R.",
+    "body": [
+      "from typing import Callable, TypeVar",
+      "",
+      "${1:T} = TypeVar(\"${1:T}\")",
+      "${2:R} = TypeVar(\"${2:R}\")",
+      "",
+      "",
+      "def ${3:transform}(value: ${1:T}, fn: Callable[[${1:T}], ${2:R}]) -> ${2:R}:",
+      "    return fn(value)",
+      "",
+      "",
+      "${3:transform}(\"${4:123}\", int)  # str → int",
+      "${3:transform}(${5:10}, str)      # int → str"
+    ]
+  },
+  "601-Config | Frozen Dataclass | dotenv + Cache": {
+    "scope": "python",
+    "prefix": [
+      "group-config",
+      "template-config",
+      "config-frozen-dataclass",
+      "config-for-env",
+      "dotenv-config",
+      "env-config"
+    ],
+    "description": "[Template][Config] Frozen dataclass config loaded from .env/.env.<env> with cached per-environment instances.",
+    "body": [
+      "from __future__ import annotations",
+      "",
+      "import os",
+      "from dataclasses import dataclass",
+      "from pathlib import Path",
+      "from typing import ClassVar, Self",
+      "",
+      "from dotenv import load_dotenv",
+      "",
+      "",
+      "@dataclass(frozen=True, slots=True)",
+      "class ${1:Config}:",
+      "    env: str",
+      "    debug: bool",
+      "    app_name: str",
+      "    database_url: str",
+      "",
+      "    _cache: ClassVar[dict[str, Self]] = {}",
+      "",
+      "    @classmethod",
+      "    def for_env(cls, env: str | None = None) -> Self:",
+      "        resolved_env = env or os.getenv(\"${2:APP_ENV}\", \"${3:dev}\")",
+      "        project_root = Path(__file__).resolve().parent",
+      "",
+      "        load_dotenv(project_root / \".env\", override=False)",
+      "        load_dotenv(project_root / f\".env.{resolved_env}\", override=True)",
+      "",
+      "        if resolved_env not in cls._cache:",
+      "            cls._cache[resolved_env] = cls(",
+      "                env=resolved_env,",
+      "                debug=os.getenv(\"${4:DEBUG}\", \"false\").lower() in {\"1\", \"true\", \"yes\", \"on\"},",
+      "                app_name=os.getenv(\"${5:APP_NAME}\", \"${6:sample-app}\"),",
+      "                database_url=os.environ[\"${7:DATABASE_URL}\"],",
+      "            )",
+      "",
+      "        return cls._cache[resolved_env]",
+      "",
+      "",
+      "config = ${1:Config}.for_env()"
+    ]
+  },
+  "701-Logging | Standard Logger | StreamHandler": {
+    "scope": "python",
+    "prefix": [
+      "group-logging",
+      "template-logger",
+      "python-logger",
+      "logging-setup",
+      "logger-template",
+      "standard-logging"
+    ],
+    "description": "[Template][Logging] Configure a standard Python logger with StreamHandler and formatter.",
+    "body": [
+      "import logging",
+      "",
+      "",
+      "def ${1:build_logger}(name: str = \"${2:app}\") -> logging.Logger:",
+      "    logger = logging.getLogger(name)",
+      "    if logger.handlers:",
+      "        return logger",
+      "",
+      "    logger.setLevel(logging.${3:INFO})",
+      "",
+      "    handler = logging.StreamHandler()",
+      "    handler.setFormatter(",
+      "        logging.Formatter(",
+      "            \"%(asctime)s | %(levelname)s | %(name)s | %(message)s\"",
+      "        )",
+      "    )",
+      "",
+      "    logger.addHandler(handler)",
+      "    logger.propagate = False",
+      "    return logger",
+      "",
+      "",
+      "logger = ${1:build_logger}(__name__)",
+      "logger.info(\"${4:service started}\")"
+    ]
+  },
+  "801-Validation | Dataclass | Field Validators": {
+    "scope": "python",
+    "prefix": [
+      "group-validation",
+      "template-validator",
+      "dataclass-validator",
+      "field-validator",
+      "validatable-dataclass",
+      "validator-decorator"
+    ],
+    "description": "[Template][Validation] Validatable base class with @validator decorator hooks for dataclass fields.",
+    "body": [
+      "from __future__ import annotations",
+      "",
+      "from dataclasses import dataclass",
+      "from typing import Any, Callable, Final, Iterator",
+      "",
+      "VALIDATOR_ATTR: Final[str] = \"_validate_field\"",
+      "",
+      "",
+      "def ${1:validator}(field_name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:",
+      "    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:",
+      "        setattr(func, VALIDATOR_ATTR, field_name)",
+      "        return func",
+      "",
+      "    return decorator",
+      "",
+      "",
+      "class ${2:Validatable}:",
+      "    \"\"\"Base class for dataclasses with field-level validators.",
+      "",
+      "    Validators are instance methods decorated with @validator(\"<field_name>\").",
+      "    Each takes the current value and returns the (possibly transformed) value.",
+      "    \"\"\"",
+      "",
+      "    def __post_init__(self) -> None:",
+      "        for field_name, validate in self._validators():",
+      "            if not hasattr(self, field_name):",
+      "                raise AttributeError(",
+      "                    f\"{self.__class__.__name__} has validator for unknown field {field_name!r}\"",
+      "                )",
+      "",
+      "            value = getattr(self, field_name)",
+      "            new_value = validate(value)",
+      "            object.__setattr__(self, field_name, new_value)",
+      "",
+      "    def _validators(self) -> Iterator[tuple[str, Callable[[Any], Any]]]:",
+      "        for attr_name in dir(self):",
+      "            method = getattr(self, attr_name)",
+      "            if not callable(method):",
+      "                continue",
+      "            field_name = getattr(method, VALIDATOR_ATTR, None)",
+      "            if field_name is None:",
+      "                continue",
+      "            yield field_name, method",
+      "",
+      "",
+      "@dataclass(slots=True)",
+      "class ${3:User}(${2:Validatable}):",
+      "    name: str",
+      "    age: int",
+      "",
+      "    @${1:validator}(\"age\")",
+      "    def ${4:validate_age}(self, value: int) -> int:",
+      "        if value < 0:",
+      "            raise ValueError(\"Age cannot be negative\")",
+      "        return value",
+      "",
+      "    @${1:validator}(\"name\")",
+      "    def ${5:validate_name}(self, value: str) -> str:",
+      "        return value.strip().title()"
+    ]
+  },
+  "901-Error | Try Except | Common Native + Custom": {
     "scope": "python",
     "prefix": [
       "group-error",
-      "error-try-except-common-native-custom",
+      "template-try-except",
       "error-try-except",
       "python-error-handling",
       "exception-template"
     ],
-    "description": "[Error] Try/except template with common native errors, custom exception raise/capture, fallback chaining, else, and finally.",
+    "description": "[Template][Error] Try/except with common native errors, custom exception, fallback chaining, else, and finally.",
     "body": [
       "class ${1:AppValidationError}(Exception):",
       "    \"\"\"Raised when input validation fails.\"\"\"",
+      "",
       "",
       "try:",
       "    ${2:payload} = ${3:load_payload()}",
@@ -291,50 +771,6 @@
       "    ${20:handle_success(result)}",
       "finally:",
       "    ${21:cleanup_resources()}"
-    ]
-  },
-  "20-Transform | Flatten Dictionary Into Object": {
-    "scope": "python",
-    "prefix": [
-      "group-transform",
-      "flatten-dict-to-object",
-      "flatten-dict-object",
-      "flatten-items",
-      "dict-to-flat-object"
-    ],
-    "description": "[Transform] Flatten nested dictionary/list items into flat objects using a two-level comprehension.",
-    "body": [
-      "# Flatten nested child items into one flat object per child.",
-      "${1:flat_results}: list[${2:FlatModel}] = [",
-      "    ${2:FlatModel}(",
-      "        ${3:id}=parent[\"${3:id}\"],",
-      "        ${4:name}=parent[\"${4:name}\"],",
-      "        ${5:item_id}=child[\"${5:item_id}\"],",
-      "        ${6:item_name}=child[\"${6:item_name}\"],",
-      "    )",
-      "    for parent in ${7:results}",
-      "    for child in parent[\"${8:items}\"]",
-      "]"
-    ]
-  },
-  "22-Transform | Dataclass | ContextResult": {
-    "scope": "python",
-    "prefix": [
-      "group-transform",
-      "contextresult",
-      "contextresult-dataclass",
-      "scoreboard-context"
-    ],
-    "description": "[Transform] ContextResult dataclass with default_factory fields.",
-    "body": [
-      "@dataclass()",
-      "class ContextResult:",
-      "    results: list[Result] = field(default_factory=list)",
-      "    flattened_results: list[FlatResult] = field(default_factory=list)",
-      "    groupped_by_party: defaultdict[str, list[FlatResult]] = field(",
-      "        default_factory=lambda: defaultdict(list)",
-      "    )",
-      "    scoreboard: dict = field(default_factory=dict)"
     ]
   }
 }
