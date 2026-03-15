@@ -3,7 +3,6 @@ from results_service import ResultStore
 
 
 class ResultsController:
-
     def __init__(self) -> None:
         self.store: ResultStore = ResultStore()
 
