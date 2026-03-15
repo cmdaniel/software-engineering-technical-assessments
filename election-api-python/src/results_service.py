@@ -1,3 +1,6 @@
+from venv import logger
+
+
 class ResultStore:
     def __init__(self) -> None:
         self.store: list[dict] = []
@@ -12,7 +15,12 @@ class ResultStore:
         self.store.append(result)
 
     def get_all(self) -> list[dict]:
-        return self.store
+        try:
+            return self.store
+        except Exception as ex:
+            logger.error(ex)
+
+        return []
 
     def reset(self) -> None:
         self.store: list[dict] = []

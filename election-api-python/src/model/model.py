@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from decimal import Decimal
 from enum import StrEnum
 
@@ -21,34 +21,37 @@ class PartyResultEnum(StrEnum):
     SHARES = "shares"
 
 
-@dataclass
+@dataclass(slots=True)
 class Scoreboard:
-    party_seats: dict[Party, int]
-    overall_winner: Party
-    party_result: dict[Party, dict[str, dict[Party, int | Decimal]]]
+    party_seats: dict[str, int] = field(default_factory=dict)
+    overall_winner: Party = Party.NOONE
+    party_result: dict[Party, dict[str, dict[Party, int | Decimal]]] = field(
+        default_factory=dict
+    )
     is_tied: bool = False
 
 
-@dataclass
+@dataclass(slots=True)
 class PartyResult:
-    party: Party
-    votes: int
-    share: Decimal
+    party: Party = Party.NOONE
+    votes: int = 0
+    share: Decimal = Decimal(0)
 
 
-@dataclass
+@dataclass(slots=True)
 class Constituency:
-    id: int
-    name: str
-    seqNo: int
-    PartyResults: list[PartyResult]
+    id: int = 0
+    name: str = ""
+    seq_no: int = 0
+    winner_party: Party = Party.NOONE
+    party_results: list[PartyResult] = field(default_factory=list)
 
 
-@dataclass
+@dataclass(slots=True)
 class FlatConstituency:
-    id: int
-    name: str
-    seqNo: int
-    party: Party
-    votes: int
-    share: Decimal
+    id: int = 0
+    name: str = ""
+    seq_no: int = 1
+    party: Party = Party.NOONE
+    votes: int = 0
+    share: Decimal = Decimal(0)
