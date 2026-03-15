@@ -14,6 +14,7 @@ class PartyEnum(Enum):
     UKIP = "UKIP"
     NOONE = "noone"
     WINNER = "winner"
+    SUM = "sum"
 
 
 class PartyResultEnum(Enum):

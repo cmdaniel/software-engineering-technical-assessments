@@ -42,10 +42,8 @@ class TestScoreboard(unittest.TestCase):
         # assert winner == noone
         """
         self.load_results(5)
-        scoreboard: list = self.fetch_scoreboard()
+        scoreboard = self.fetch_scoreboard()
         self.assertNotEqual(len(scoreboard), 0)
-        
-        
         self.assertEqual(scoreboard["LD"], 1, f"Should be LD == 1")
         self.assertEqual(scoreboard[PartyEnum.LAB], 4, f"Should be LAB == 4")
         self.assertEqual(
@@ -53,36 +51,55 @@ class TestScoreboard(unittest.TestCase):
         )
 
     def test_first_100(self) -> None:
-        self.load_results(100)
-        scoreboard: list = self.fetch_scoreboard()
-        self.assertNotEqual(len(scoreboard), 0)
+        """
         # assert LD == 12
+        # assert LAB == 56
+        # assert CON == 31
+        # assert winner = noone
+        """
+        self.load_results(100)
+        status_code, scoreboard = self.fetch_scoreboard()
+        self.assertNotEqual(len(scoreboard), 0)
 
-    # assert LAB == 56
-    # assert CON == 31
-    # assert winner = noone
+        self.assertEqual(scoreboard[PartyEnum.LD], 12, f"LD == 12")
+        self.assertEqual(scoreboard[PartyEnum.LAB], 56, f"LAB == 56")
+        self.assertEqual(scoreboard[PartyEnum.CON], 31, f"CON == 31")
+        self.assertEqual(
+            scoreboard[PartyEnum.WINNER], PartyEnum.NOONE, f"winner = noone"
+        )
 
     def test_first_554(self) -> None:
-        self.load_results(554)
-        scoreboard: list = self.fetch_scoreboard()
-        self.assertNotEqual(len(scoreboard), 0)
+        """
         # assert LD == 52
-
-    # assert LAB = 325
-    # assert CON = 167
-    # assert winner = LAB
+        # assert LAB = 325
+        # assert CON = 167
+        # assert winner = LAB
+        """
+        self.load_results(554)
+        status_code, scoreboard = self.fetch_scoreboard()
+        self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(scoreboard[PartyEnum.LD], 52, f"LD == 52")
+        self.assertEqual(scoreboard[PartyEnum.LAB], 325, f"LAB == 325")
+        self.assertEqual(scoreboard[PartyEnum.CON], 167, f"CON == 167")
+        self.assertEqual(scoreboard[PartyEnum.WINNER], PartyEnum.LAB, f"winner == LAB")
 
     def test_all_results(self) -> None:
-        self.load_results(650)
-        scoreboard: list = self.fetch_scoreboard()
-        self.assertNotEqual(len(scoreboard), 0)
+        """
         # assert LD == 62
+        # assert LAB == 349
+        # assert CON == 210
+        # assert winner = LAB
+        # assert sum = 650
+        """
+        self.load_results(650)
+        status_code, scoreboard = self.fetch_scoreboard()
+        self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(scoreboard[PartyEnum.LD], 62, f"LD == 62")
+        self.assertEqual(scoreboard[PartyEnum.LAB], 349, f"LAB == 349")
+        self.assertEqual(scoreboard[PartyEnum.CON], 210, f"CON == 210")
+        self.assertEqual(scoreboard[PartyEnum.WINNER], PartyEnum.LAB, f"winner == LAB")
+        self.assertEqual(scoreboard[PartyEnum.SUM], 650, f"sum == 650")
 
-
-# assert LAB == 349
-# assert CON == 210
-# assert winner = LAB
-# assert sum = 650
 
 if __name__ == "__main__":
     unittest.main()
