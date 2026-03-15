@@ -1,4 +1,7 @@
-from venv import logger
+from model.log import build_logger
+
+
+logger = build_logger(__name__)
 
 
 class ResultStore:
