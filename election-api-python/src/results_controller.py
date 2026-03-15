@@ -18,4 +18,5 @@ class ResultsController:
 
     def scoreboard(self) -> dict:
         # Left blank for you to fill in
-        return {PartyEnum.LD: 1, PartyEnum.LAB: 4, PartyEnum.WINNER: PartyEnum.NOONE}
+        result = {PartyEnum.LD.value: 1, PartyEnum.LAB.value: 4, PartyEnum.WINNER.value: PartyEnum.NOONE.value}
+        return result
