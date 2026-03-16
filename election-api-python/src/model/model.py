@@ -24,7 +24,7 @@ class PartyResultEnum(StrEnum):
 @dataclass(slots=True)
 class Scoreboard:
     party_seats: dict[str, int] = field(default_factory=dict)
-    overall_winner: Party = Party.noone
+    winner: Party = Party.noone
     seats_sum: int = 0
     is_tied: bool = False
     party_result: dict[Party, dict[str, int | Decimal]] = field(default_factory=dict)
@@ -42,7 +42,7 @@ class Constituency:
     id: int = 0
     name: str = ""
     seq_no: int = 0
-    winner_party: Party = Party.noone
+    winner: Party = Party.noone
     party_results: list[PartyResult] = field(default_factory=list)
 
 

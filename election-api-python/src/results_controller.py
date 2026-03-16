@@ -1,7 +1,9 @@
 from domain.domain import (
     ContextResult,
     compute_constituency_winner,
+    compute_overall_winner,
     compute_party_seats,
+    compute_public_result,
     map_constituencies,
     transform_flat_constituencies,
 )
@@ -46,7 +48,14 @@ class ResultsController:
             transform_flat_constituencies,
             compute_constituency_winner,
             compute_party_seats,
+            compute_overall_winner,
+            compute_public_result,
         )
 
-        return {**pipe_result.scoreboard.party_seats, Party.winner: Party.noone}
-        # return {Party.LD: 1, Party.LAB: 4, Party.winner: Party.noone}
+        seats = pipe_result.scoreboard.party_seats
+        return {
+            **seats,
+            Party.winner: pipe_result.scoreboard.winner,
+            Party.sum: sum(seats.values()),
+            "party_result": pipe_result.scoreboard.party_result,
+        }

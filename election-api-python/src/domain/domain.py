@@ -1,8 +1,12 @@
 from dataclasses import dataclass, field
 from collections import Counter
+from decimal import Decimal
+from itertools import groupby
 from model.log import logger
-from model.model import Constituency, FlatConstituency, PartyResult, Scoreboard
+from model.model import Constituency, FlatConstituency, Party, PartyResult, Scoreboard
 from typing import Any
+
+MIN_VOTES_TO_WIN = 325
 
 
 @dataclass(slots=True)
@@ -62,7 +66,7 @@ def transform_flat_constituencies(context: ContextResult) -> ContextResult:
 def compute_constituency_winner(context: ContextResult) -> ContextResult:
 
     for constituency in context.constituencies:
-        constituency.winner_party = max(
+        constituency.winner = max(
             constituency.party_results, key=lambda item: item.votes
         ).party
 
@@ -72,9 +76,45 @@ def compute_constituency_winner(context: ContextResult) -> ContextResult:
 def compute_party_seats(context: ContextResult) -> ContextResult:
 
     context.scoreboard.party_seats = dict(
-        Counter(constituency.winner_party for constituency in context.constituencies)
+        Counter(constituency.winner for constituency in context.constituencies)
     )
 
     return context
 
 
+def compute_overall_winner(context: ContextResult) -> ContextResult:
+
+    winner, votes = max(
+        context.scoreboard.party_seats.items(), key=lambda item: item[1]
+    )
+    context.scoreboard.winner = (
+        Party(winner) if votes >= MIN_VOTES_TO_WIN else Party.noone
+    )
+
+    parties_with_same_votes_as_winner = list(
+        filter(
+            lambda item: item[1] == votes,
+            context.scoreboard.party_seats.items(),
+        )
+    )
+    context.scoreboard.is_tied = len(parties_with_same_votes_as_winner) > 1
+
+    return context
+
+
+def compute_public_result(context: ContextResult) -> ContextResult:
+
+    flat_items = sorted(context.flat_constituencies, key=lambda item: item.party)
+    total_votes = sum(item.votes for item in context.flat_constituencies)
+
+    context.scoreboard.party_result = {
+        key: {
+            "votes": sum(item.votes for item in group),
+            "share": Decimal(
+                round(sum(item.votes for item in group) / total_votes * 100, 2)
+            ),
+        }
+        for key, group in groupby(flat_items, key=lambda item: item.party)
+    }
+
+    return context
