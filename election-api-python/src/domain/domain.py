@@ -107,14 +107,17 @@ def compute_public_result(context: ContextResult) -> ContextResult:
     flat_items = sorted(context.flat_constituencies, key=lambda item: item.party)
     total_votes = sum(item.votes for item in context.flat_constituencies)
 
-    context.scoreboard.party_result = {
-        key: {
-            "votes": sum(item.votes for item in group),
-            "share": Decimal(
-                round(sum(item.votes for item in group) / total_votes * 100, 2)
-            ),
+    context.scoreboard.party_result = {}
+    for key, group in groupby(flat_items, key=lambda item: item.party):
+        party_votes = sum(item.votes for item in group)
+        share = (
+            Decimal(round(party_votes / total_votes * 100, 2))
+            if total_votes > 0
+            else Decimal(0)
+        )
+        context.scoreboard.party_result[key] = {
+            "votes": party_votes,
+            "share": share,
         }
-        for key, group in groupby(flat_items, key=lambda item: item.party)
-    }
 
     return context
