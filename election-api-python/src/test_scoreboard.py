@@ -1,4 +1,5 @@
 import unittest, json, os
+from model.model import Party
 from server import app, controller
 from werkzeug.test import TestResponse
 
@@ -23,12 +24,12 @@ class TestScoreboard(unittest.TestCase):
             results.append(self.load_and_post_result_file(i + 1))
         return results
 
-    def fetch_scoreboard(self) -> tuple[str, list[dict]]:
+    def fetch_scoreboard(self) -> tuple[str, dict]:
         response = self.server.get("/scoreboard")
         return (
             response.status,
             (
-                []
+                {}
                 if response.data == b"{}\n"
                 else json.loads(response.data.decode("utf-8"))
             ),
@@ -38,40 +39,104 @@ class TestScoreboard(unittest.TestCase):
         controller.reset()
 
     def test_first_5(self) -> None:
-        self.load_results(5)
-        status, scoreboard = self.fetch_scoreboard()
-        self.assertNotEqual(len(scoreboard), 0)
+        """
         # assert LD == 1
         # assert LAB = 4
         # assert winner = noone
-
-    def test_first_100(self) -> None:
-        self.load_results(100)
+        """
+        self.load_results(5)
         status, scoreboard = self.fetch_scoreboard()
         self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(
+            scoreboard[Party.LD], 1, f"Should be 1 but got {scoreboard[Party.LD]}"
+        )
+        self.assertEqual(
+            scoreboard[Party.LAB], 4, f"Should be 4 but got {scoreboard[Party.LAB]}"
+        )
+        self.assertEqual(
+            scoreboard[Party.winner],
+            Party.noone,
+            f"Should be noone but got {scoreboard[Party.winner]}",
+        )
+
+    def test_first_100(self) -> None:
+        """
         # assert LD == 12
         # assert LAB == 56
         # assert CON == 31
         # assert winner = noone
-
-    def test_first_554(self) -> None:
-        self.load_results(554)
+        """
+        self.load_results(100)
         status, scoreboard = self.fetch_scoreboard()
         self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(
+            scoreboard[Party.LD], 12, f"Should be 12 but got {scoreboard[Party.LD]}"
+        )
+        self.assertEqual(
+            scoreboard[Party.LAB], 56, f"Should be 56 but got {scoreboard[Party.LAB]}"
+        )
+        self.assertEqual(
+            scoreboard[Party.CON], 31, f"Should be 31 but got {scoreboard[Party.CON]}"
+        )
+        self.assertEqual(
+            scoreboard[Party.winner],
+            Party.noone,
+            f"Should be noone but got {scoreboard[Party.winner]}",
+        )
+
+    def test_first_554(self) -> None:
+        """
         # assert LD == 52
         # assert LAB = 325
         # assert CON = 167
         # assert winner = LAB
-
-    def test_all_results(self) -> None:
-        self.load_results(650)
+        """
+        self.load_results(554)
         status, scoreboard = self.fetch_scoreboard()
         self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(
+            scoreboard[Party.LD], 52, f"Should be 52 but got {scoreboard[Party.LD]}"
+        )
+        self.assertEqual(
+            scoreboard[Party.LAB], 325, f"Should be 325 but got {scoreboard[Party.LAB]}"
+        )
+        self.assertEqual(
+            scoreboard[Party.CON], 167, f"Should be 167 but got {scoreboard[Party.CON]}"
+        )
+        self.assertEqual(
+            scoreboard[Party.winner],
+            Party.LAB,
+            f"Should be LAB but got {scoreboard[Party.winner]}",
+        )
+
+    def test_all_results(self) -> None:
+        """
         # assert LD == 62
         # assert LAB == 349
         # assert CON == 210
         # assert winner = LAB
         # assert sum = 650
+        """
+        self.load_results(650)
+        status, scoreboard = self.fetch_scoreboard()
+        self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(
+            scoreboard[Party.LD], 62, f"Should be 62 but got {scoreboard[Party.LD]}"
+        )
+        self.assertEqual(
+            scoreboard[Party.LAB], 349, f"Should be 349 but got {scoreboard[Party.LAB]}"
+        )
+        self.assertEqual(
+            scoreboard[Party.CON], 210, f"Should be 210 but got {scoreboard[Party.CON]}"
+        )
+        self.assertEqual(
+            scoreboard[Party.winner],
+            Party.LAB,
+            f"Should be LAB but got {scoreboard[Party.winner]}",
+        )
+        self.assertEqual(
+            scoreboard[Party.sum], 650, f"Should be 650 but got {scoreboard[Party.sum]}"
+        )
 
 
 if __name__ == "__main__":
