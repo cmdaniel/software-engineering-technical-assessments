@@ -5,6 +5,7 @@ from itertools import groupby
 from model.log import logger
 from model.model import Constituency, FlatConstituency, Party, PartyResult, Scoreboard
 from typing import Any
+import matplotlib.pyplot as plt
 
 MIN_VOTES_TO_WIN = 325
 
@@ -119,5 +120,26 @@ def compute_public_result(context: ContextResult) -> ContextResult:
             "votes": party_votes,
             "share": share,
         }
+
+    return context
+
+
+def plot_public_result(context: ContextResult) -> ContextResult:
+
+    data: dict[str, int] = {
+        party: int(item["votes"])
+        for party, item in context.scoreboard.party_result.items()
+        if int(item["votes"] > 1000000)
+    }
+
+    labels = list(data.keys())
+    sizes = list(data.values())
+
+    plt.figure(figsize=(6, 6))
+    plt.pie(sizes, labels=labels, autopct="%1.1f%%", startangle=90)
+    plt.title("Pie Chart")
+    plt.axis("equal")
+    plt.tight_layout()
+    plt.show()
 
     return context

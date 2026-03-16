@@ -5,6 +5,7 @@ from domain.domain import (
     compute_party_seats,
     compute_public_result,
     map_constituencies,
+    plot_public_result,
     transform_flat_constituencies,
 )
 from model.model import Party
@@ -50,6 +51,7 @@ class ResultsController:
             compute_party_seats,
             compute_overall_winner,
             compute_public_result,
+            plot_public_result
         )
 
         seats = pipe_result.scoreboard.party_seats
