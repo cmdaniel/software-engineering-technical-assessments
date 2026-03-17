@@ -27,7 +27,7 @@ class Scoreboard:
     winner: Party = Party.noone
     seats_sum: int = 0
     is_tied: bool = False
-    party_result: dict[Party, dict[str, int | Decimal]] = field(default_factory=dict)
+    party_result: dict[Party, dict[str, int | float]] = field(default_factory=dict)
 
 
 @dataclass(slots=True)
