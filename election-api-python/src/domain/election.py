@@ -101,9 +101,9 @@ def flat_constituency(context: ContextResult) -> ContextResult:
 
 
 def compute_public_result(context: ContextResult) -> ContextResult:
-    flat_items = sorted(context.flat_constituencies, key=lambda item: item.party)
+    sorted_flat_items = sorted(context.flat_constituencies, key=lambda item: item.party)
+    grouped = groupby(sorted_flat_items, key=lambda item: item.party)
     total_votes = sum(item.votes for item in context.flat_constituencies)
-    grouped = groupby(flat_items, key=lambda item: item.party)
     for party, group in grouped:
         votes_sum = sum(item.votes for item in group)
         context.scoreboard.bonus_party_result[party] = {
