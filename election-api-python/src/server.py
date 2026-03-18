@@ -1,3 +1,5 @@
+from http.client import HTTPException
+from werkzeug.exceptions import HTTPException
 from flask import Flask, request
 from results_controller import ResultsController
 
@@ -15,4 +17,19 @@ def add_result() -> dict:
 @app.route("/scoreboard", methods=["GET"])
 def scoreboard() -> dict:
     return controller.scoreboard()
-    
+
+
+
+# DM
+@app.errorhandler(OSError)
+@app.errorhandler(ConnectionError)
+def handle_connection_errors(err: Exception) -> tuple[dict, int]:
+    return {"error": str(err)}, 503
+
+@app.errorhandler(HTTPException)
+def handle_http_errors(err: HTTPException) -> tuple[dict, int]:
+    return {"error": err.description}, err.code or 500
+
+@app.errorhandler(Exception)
+def handle_unexpected_errors(err: Exception) -> tuple[dict, int]:
+    return {"error": str(err)}, 500

@@ -1,3 +1,4 @@
+from collections import defaultdict
 import unittest, json, os
 from server import app, controller
 from werkzeug.test import TestResponse
@@ -23,15 +24,16 @@ class TestScoreboard(unittest.TestCase):
             results.append(self.load_and_post_result_file(i + 1))
         return results
 
-    def fetch_scoreboard(self) -> tuple[str, list[dict]]:
+    # DM
+    def fetch_scoreboard(self) -> tuple[dict, str]:
         response = self.server.get("/scoreboard")
         return (
-            response.status,
             (
-                []
+                defaultdict()
                 if response.data == b"{}\n"
                 else json.loads(response.data.decode("utf-8"))
             ),
+            response.status,
         )
 
     def setUp(self) -> None:
@@ -39,7 +41,9 @@ class TestScoreboard(unittest.TestCase):
 
     def test_first_5(self) -> None:
         self.load_results(5)
-        status, scoreboard = self.fetch_scoreboard()
+        #DM
+        scoreboard, status = self.fetch_scoreboard()
+        self.assertEqual(status, "200 OK", f"Should get 200 OK when fetching data, but got {status}: {scoreboard}")
         self.assertNotEqual(len(scoreboard), 0)
         # assert LD == 1
         # assert LAB = 4
@@ -47,7 +51,8 @@ class TestScoreboard(unittest.TestCase):
 
     def test_first_100(self) -> None:
         self.load_results(100)
-        status, scoreboard = self.fetch_scoreboard()
+        scoreboard, status = self.fetch_scoreboard()
+        self.assertEqual(status, "200 OK", f"Should get 200 OK when fetching data, but got {status}: {scoreboard}")
         self.assertNotEqual(len(scoreboard), 0)
         # assert LD == 12
         # assert LAB == 56
@@ -56,7 +61,8 @@ class TestScoreboard(unittest.TestCase):
 
     def test_first_554(self) -> None:
         self.load_results(554)
-        status, scoreboard = self.fetch_scoreboard()
+        scoreboard, status = self.fetch_scoreboard()
+        self.assertEqual(status, "200 OK", f"Should get 200 OK when fetching data, but got {status}: {scoreboard}")
         self.assertNotEqual(len(scoreboard), 0)
         # assert LD == 52
         # assert LAB = 325
@@ -65,7 +71,8 @@ class TestScoreboard(unittest.TestCase):
 
     def test_all_results(self) -> None:
         self.load_results(650)
-        status, scoreboard = self.fetch_scoreboard()
+        scoreboard, status = self.fetch_scoreboard()
+        self.assertEqual(status, "200 OK", f"Should get 200 OK when fetching data, but got {status}: {scoreboard}")
         self.assertNotEqual(len(scoreboard), 0)
         # assert LD == 62
         # assert LAB == 349

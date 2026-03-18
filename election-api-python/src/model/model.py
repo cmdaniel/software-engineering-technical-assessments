@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from decimal import Decimal
 from enum import StrEnum
@@ -12,6 +13,9 @@ class Party(StrEnum):
     GRN = "GRN"
     UKIP = "UKIP"
     noone = "noone"
+
+
+class ScoreboardKey(StrEnum):
     winner = "winner"
     sum = "sum"
 
@@ -21,32 +25,26 @@ class PartyResultEnum(StrEnum):
     SHARES = "shares"
 
 
-@dataclass(slots=True)
-class Scoreboard:
-    party_seats: dict[str, int] = field(default_factory=dict)
-    winner: Party = Party.noone
-    seats_sum: int = 0
-    is_tied: bool = False
-    party_result: dict[Party, dict[str, int | Decimal]] = field(default_factory=dict)
-
-
-@dataclass(slots=True)
+@dataclass(frozen=True)
 class PartyResult:
     party: Party = Party.noone
     votes: int = 0
     share: Decimal = Decimal(0)
 
 
-@dataclass(slots=True)
-class Constituency:
+@dataclass(frozen=True)
+class Constituency(ABC):
     id: int = 0
     name: str = ""
     seq_no: int = 0
-    winner: Party = Party.noone
     party_results: list[PartyResult] = field(default_factory=list)
 
+    @property
+    @abstractmethod
+    def winner(self) -> Party: ...
 
-@dataclass(slots=True)
+
+@dataclass(frozen=True)
 class FlatConstituency:
     id: int = 0
     name: str = ""
@@ -54,3 +52,12 @@ class FlatConstituency:
     party: Party = Party.noone
     votes: int = 0
     share: Decimal = Decimal(0)
+
+
+@dataclass(slots=True)
+class Scoreboard:
+    party_seats: dict[str, int] = field(default_factory=dict)
+    overall_winner: Party = Party.noone
+    check_seats_sum: int = 0
+    check_is_tied: bool = False
+    bonus_party_result: list[PartyResult] = field(default_factory=list[PartyResult])
