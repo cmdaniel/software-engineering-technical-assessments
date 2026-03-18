@@ -1,5 +1,6 @@
 from collections import defaultdict
 import unittest, json, os
+from model.model import Party, ScoreboardKey
 from server import app, controller
 from werkzeug.test import TestResponse
 
@@ -45,6 +46,9 @@ class TestScoreboard(unittest.TestCase):
         scoreboard, status = self.fetch_scoreboard()
         self.assertEqual(status, "200 OK", f"Should get 200 OK when fetching data, but got {status}: {scoreboard}")
         self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(scoreboard[Party.LD], 1, f"Should be LD == 1 but got {scoreboard[Party.LD]}")
+        self.assertEqual(scoreboard[Party.LAB], 4, f"Should be LAB = 4 but got {scoreboard[Party.LAB]}")
+        self.assertEqual(scoreboard[ScoreboardKey.winner], Party.noone, f"Should be winner = noone but got {scoreboard[ScoreboardKey.winner]}")
         # assert LD == 1
         # assert LAB = 4
         # assert winner = noone
@@ -54,6 +58,10 @@ class TestScoreboard(unittest.TestCase):
         scoreboard, status = self.fetch_scoreboard()
         self.assertEqual(status, "200 OK", f"Should get 200 OK when fetching data, but got {status}: {scoreboard}")
         self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(scoreboard[Party.LD], 12, f"Should be LD == 12 but got {scoreboard[Party.LD]}")
+        self.assertEqual(scoreboard[Party.LAB], 56, f"Should be LAB == 56 but got {scoreboard[Party.LAB]}")
+        self.assertEqual(scoreboard[Party.CON], 31, f"Should be CON == 31 but got {scoreboard[Party.CON]}")
+        self.assertEqual(scoreboard[ScoreboardKey.winner], Party.noone, f"Should be winner = noone but got {scoreboard[ScoreboardKey.winner]}")
         # assert LD == 12
         # assert LAB == 56
         # assert CON == 31
@@ -64,6 +72,10 @@ class TestScoreboard(unittest.TestCase):
         scoreboard, status = self.fetch_scoreboard()
         self.assertEqual(status, "200 OK", f"Should get 200 OK when fetching data, but got {status}: {scoreboard}")
         self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(scoreboard[Party.LD], 52, f"Should be LD == 52 but got {scoreboard[Party.LD]}")
+        self.assertEqual(scoreboard[Party.LAB], 325, f"Should be LAB = 325 but got {scoreboard[Party.LAB]}")
+        self.assertEqual(scoreboard[Party.CON], 167, f"Should be CON = 167 but got {scoreboard[Party.CON]}")
+        self.assertEqual(scoreboard[ScoreboardKey.winner], Party.LAB, f"Should be winner = LAB but got {scoreboard[ScoreboardKey.winner]}")
         # assert LD == 52
         # assert LAB = 325
         # assert CON = 167
@@ -74,6 +86,12 @@ class TestScoreboard(unittest.TestCase):
         scoreboard, status = self.fetch_scoreboard()
         self.assertEqual(status, "200 OK", f"Should get 200 OK when fetching data, but got {status}: {scoreboard}")
         self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(scoreboard[Party.LD], 62, f"Should be LD == 62 but got {scoreboard[Party.LD]}")
+        self.assertEqual(scoreboard[Party.LAB], 349, f"Should be LAB == 349 but got {scoreboard[Party.LAB]}")
+        self.assertEqual(scoreboard[Party.CON], 210, f"Should be CON == 210 but got {scoreboard[Party.CON]}")
+        self.assertEqual(scoreboard[ScoreboardKey.winner], Party.LAB, f"Should be winner = LAB but got {scoreboard[ScoreboardKey.winner]}")
+        self.assertEqual(scoreboard[ScoreboardKey.sum], 650, f"Should be sum = 650 but got {scoreboard[ScoreboardKey.sum]}")
+
         # assert LD == 62
         # assert LAB == 349
         # assert CON == 210

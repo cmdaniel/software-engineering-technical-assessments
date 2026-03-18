@@ -60,4 +60,4 @@ class Scoreboard:
     overall_winner: Party = Party.noone
     check_seats_sum: int = 0
     check_is_tied: bool = False
-    bonus_party_result: list[PartyResult] = field(default_factory=list[PartyResult])
+    bonus_party_result: dict[Party, dict[str, int | float]] = field(default_factory=dict[Party, dict[str, int | float]])
