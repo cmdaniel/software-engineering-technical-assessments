@@ -1,27 +1,27 @@
 from domain.domain import (
     ContextResult,
-    # compute_constituency_winners,
     compute_overall_winner,
     compute_party_results,
-    compute_scoreboard,
-    compute_scoreboard_party_seats,
-    compute_seats_sum,
+    compute_party_seats,
     flat_constituencies,
-    map_to_parents,
-    plot_chart,
+    parse_constituencies,
 )
-from model.model import Party
-from results_service import ResultStore
+from model.log import build_logger
+from model.model import ScoreboardKey
+from results_service import ResultRepository
 from typing import Callable
+
+
+logger = build_logger(__name__)
 
 
 class ResultsController:
 
-    def __init__(self) -> None:
-        self.store: ResultStore = ResultStore()
+    def __init__(self, store: ResultRepository) -> None:
+        self.store = store
 
-    def get_result(self, id: int) -> str | dict:
-        return self.store.get_result(id)
+    def get_result(self, result_id: int) -> dict | None:
+        return self.store.get_result(result_id)
 
     def get_all(self) -> list[dict]:
         return self.store.get_all()
@@ -42,28 +42,23 @@ class ResultsController:
         return value
 
     def load_data(self, context: ContextResult) -> ContextResult:
-        context.constituencies = map_to_parents(self.get_all())
+        context.constituencies = parse_constituencies(self.get_all())
         return context
 
     def scoreboard(self) -> dict:
-
         result = self.pipe(
             ContextResult(),
             self.load_data,
-            # compute_constituency_winners,
-            compute_scoreboard_party_seats,
+            compute_party_seats,
             compute_overall_winner,
             flat_constituencies,
             compute_party_results,
-            compute_seats_sum,
-            compute_scoreboard,
-            # plot_chart,
         )
 
-        print(result.scoreboard.party_result)
+        logger.debug("Party results: %s", result.scoreboard.party_result)
 
         return {
             **result.scoreboard.party_seats,
-            Party.winner: result.scoreboard.winner,
-            Party.sum: result.scoreboard.seats_sum,
+            ScoreboardKey.winner: result.scoreboard.winner,
+            ScoreboardKey.sum: result.scoreboard.seats_sum,
         }

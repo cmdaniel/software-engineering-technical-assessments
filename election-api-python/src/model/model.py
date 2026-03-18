@@ -1,7 +1,7 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from decimal import Decimal
 from enum import StrEnum
-from functools import cached_property
 
 
 class Party(StrEnum):
@@ -13,6 +13,9 @@ class Party(StrEnum):
     GRN = "GRN"
     UKIP = "UKIP"
     noone = "noone"
+
+
+class ScoreboardKey(StrEnum):
     winner = "winner"
     sum = "sum"
 
@@ -39,18 +42,15 @@ class PartyResult:
 
 
 @dataclass(frozen=True)
-class Constituency:
+class Constituency(ABC):
     id: int = 0
     name: str = ""
     seq_no: int = 0
     party_results: list[PartyResult] = field(default_factory=list)
 
-    @cached_property
-    def _winner(self) -> Party:
-        raise NotImplementedError()
-
-    def winner(self) -> Party:
-        raise NotImplementedError()
+    @property
+    @abstractmethod
+    def winner(self) -> Party: ...
 
 
 @dataclass(frozen=True)

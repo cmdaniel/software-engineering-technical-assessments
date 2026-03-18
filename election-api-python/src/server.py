@@ -1,14 +1,18 @@
 from flask import Flask, request
 from werkzeug.exceptions import HTTPException
 from results_controller import ResultsController
+from results_service import ResultStore
 
 app: Flask = Flask(__name__)
-controller: ResultsController = ResultsController()
+controller: ResultsController = ResultsController(ResultStore())
 
 
-@app.route("/result/<id>", methods=["GET"])
-def individual_result(id) -> str | dict:
-    return controller.get_result(int(id))
+@app.route("/result/<result_id>", methods=["GET"])
+def individual_result(result_id: str) -> tuple[dict, int] | dict:
+    result = controller.get_result(int(result_id))
+    if result is None:
+        return {"error": f"No result with id {result_id} found."}, 404
+    return result
 
 
 @app.route("/result", methods=["POST"])

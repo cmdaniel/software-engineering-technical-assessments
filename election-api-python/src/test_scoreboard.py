@@ -1,6 +1,6 @@
 from collections import defaultdict
 import unittest, json, os
-from model.model import Party
+from model.model import Party, ScoreboardKey
 from server import app, controller
 from werkzeug.test import TestResponse
 
@@ -61,9 +61,9 @@ class TestScoreboard(unittest.TestCase):
             f"Should be LAB = 4 but got {scoreboard[Party.LAB]}",
         )
         self.assertEqual(
-            scoreboard[Party.winner],
+            scoreboard[ScoreboardKey.winner],
             Party.noone,
-            f"Should be winner = noone but got {scoreboard[Party.winner]}",
+            f"Should be winner = noone but got {scoreboard[ScoreboardKey.winner]}",
         )
 
     def test_first_100(self) -> None:
@@ -95,9 +95,9 @@ class TestScoreboard(unittest.TestCase):
             f"Should be CON == 31 but got {scoreboard[Party.CON]}",
         )
         self.assertEqual(
-            scoreboard[Party.winner],
+            scoreboard[ScoreboardKey.winner],
             Party.noone,
-            f"Should be winner = noone but got {scoreboard[Party.winner]}",
+            f"Should be winner = noone but got {scoreboard[ScoreboardKey.winner]}",
         )
 
     def test_first_554(self) -> None:
@@ -129,9 +129,9 @@ class TestScoreboard(unittest.TestCase):
             f"Should be CON = 167 but got {scoreboard[Party.CON]}",
         )
         self.assertEqual(
-            scoreboard[Party.winner],
+            scoreboard[ScoreboardKey.winner],
             Party.LAB,
-            f"Should be winner = LAB but got {scoreboard[Party.winner]}",
+            f"Should be winner = LAB but got {scoreboard[ScoreboardKey.winner]}",
         )
 
     def test_all_results(self) -> None:
@@ -164,14 +164,14 @@ class TestScoreboard(unittest.TestCase):
             f"Should be CON == 210 but got {scoreboard[Party.CON]}",
         )
         self.assertEqual(
-            scoreboard[Party.winner],
+            scoreboard[ScoreboardKey.winner],
             Party.LAB,
-            f"Should be winner = LAB but got {scoreboard[Party.winner]}",
+            f"Should be winner = LAB but got {scoreboard[ScoreboardKey.winner]}",
         )
         self.assertEqual(
-            scoreboard[Party.sum],
+            scoreboard[ScoreboardKey.sum],
             650,
-            f"Should be sum = 650 but got {scoreboard[Party.sum]}",
+            f"Should be sum = 650 but got {scoreboard[ScoreboardKey.sum]}",
         )
 
 
