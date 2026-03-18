@@ -1,0 +1,22 @@
+{
+  "Flask: App Error Handlers": {
+    "prefix": "flask-errorhandlers-all",
+    "description": "Add app-level Flask error handlers for connection, HTTP, and unexpected errors.",
+    "body": [
+      "@app.errorhandler(OSError)",
+      "@app.errorhandler(ConnectionError)",
+      "def handle_connection_errors(err: Exception) -> tuple[dict, int]:",
+      "    return {\"error\": str(err)}, 503",
+      "",
+      "",
+      "@app.errorhandler(HTTPException)",
+      "def handle_http_errors(err: HTTPException) -> tuple[dict, int]:",
+      "    return {\"error\": err.description}, err.code or 500",
+      "",
+      "",
+      "@app.errorhandler(Exception)",
+      "def handle_unexpected_errors(err: Exception) -> tuple[dict, int]:",
+      "    return {\"error\": str(err)}, 500"
+    ]
+  }
+}
