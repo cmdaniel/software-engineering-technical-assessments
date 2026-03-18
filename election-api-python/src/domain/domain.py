@@ -1,7 +1,7 @@
 from collections import Counter
 from dataclasses import dataclass, field
 from itertools import groupby
-from typing import Any, Callable, Protocol
+from typing import Any, Protocol
 
 from model.log import build_logger
 from model.model import Constituency, FlatConstituency, Party, PartyResult, Scoreboard
@@ -85,7 +85,9 @@ def compute_party_results(context: ContextResult) -> ContextResult:
     return context
 
 
-def parse_constituencies(payload: str | list[dict[str, Any]]) -> list[ConstituencyWithWinner]:
+def parse_constituencies(
+    payload: str | list[dict[str, Any]],
+) -> list[ConstituencyWithWinner]:
     try:
         if isinstance(payload, str):
             raise TypeError(payload)
