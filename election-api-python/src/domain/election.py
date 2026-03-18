@@ -83,7 +83,6 @@ def compute_seats_sum(context: ContextResult) -> ContextResult:
 
 
 def flat_constituency(context: ContextResult) -> ContextResult:
-
     context.flat_constituencies = [
         FlatConstituency(
             id=parent.id,
@@ -96,7 +95,6 @@ def flat_constituency(context: ContextResult) -> ContextResult:
         for parent in context.constituencies
         for child in parent.party_results
     ]
-
     return context
 
 
