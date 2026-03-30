@@ -1,5 +1,6 @@
 from collections import defaultdict
 import unittest, json, os
+from model.model import Party, ScoreboardKey
 from server import app, controller
 from werkzeug.test import TestResponse
 
@@ -54,16 +55,23 @@ class TestScoreboard(unittest.TestCase):
         scoreboard, status = self.fetch_scoreboard()
         self.assertEqual(status, "200 OK", f"Should get 200 OK when fetching data, but got {status}: {scoreboard}")
         self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(scoreboard[Party.LD], 12, f"Should be equal to LD == 12")
+        self.assertEqual(scoreboard[Party.LAB], 56, f"Should be equal to LAB = 56")
+        self.assertEqual(scoreboard[Party.CON], 31, f"Should be equal to CON = 31")
+        self.assertEqual(scoreboard[ScoreboardKey.winner], Party.noone, f"Should be equal to winner = noone")
         # assert LD == 12
         # assert LAB == 56
         # assert CON == 31
-        # assert winner = noone
 
     def test_first_554(self) -> None:
         self.load_results(554)
         scoreboard, status = self.fetch_scoreboard()
         self.assertEqual(status, "200 OK", f"Should get 200 OK when fetching data, but got {status}: {scoreboard}")
         self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(scoreboard[Party.LD], 52, f"Should be equal to LD == 52")
+        self.assertEqual(scoreboard[Party.LAB], 325, f"Should be equal to LAB = 325")
+        self.assertEqual(scoreboard[Party.CON], 167, f"Should be equal to CON = 167")
+        self.assertEqual(scoreboard[ScoreboardKey.winner], Party.LAB, f"Should be equal to winner = LAB")
         # assert LD == 52
         # assert LAB = 325
         # assert CON = 167
@@ -74,6 +82,11 @@ class TestScoreboard(unittest.TestCase):
         scoreboard, status = self.fetch_scoreboard()
         self.assertEqual(status, "200 OK", f"Should get 200 OK when fetching data, but got {status}: {scoreboard}")
         self.assertNotEqual(len(scoreboard), 0)
+        self.assertEqual(scoreboard[Party.LD], 62, f"Should be equal to LD == 62")
+        self.assertEqual(scoreboard[Party.LAB], 349, f"Should be equal to LAB == 349")
+        self.assertEqual(scoreboard[Party.CON], 210, f"Should be equal to CON == 210")
+        self.assertEqual(scoreboard[ScoreboardKey.winner], Party.LAB, f"Should be equal to winner = LAB")
+        self.assertEqual(scoreboard[ScoreboardKey.sum], 650, f"Should be equal to sum = 650")
         # assert LD == 62
         # assert LAB == 349
         # assert CON == 210

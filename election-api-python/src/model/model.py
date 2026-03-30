@@ -32,16 +32,13 @@ class PartyResult:
     share: Decimal = Decimal(0)
 
 
-@dataclass(frozen=True)
-class Constituency(ABC):
+@dataclass(slots=True)
+class Constituency:
     id: int = 0
     name: str = ""
     seq_no: int = 0
     party_results: list[PartyResult] = field(default_factory=list)
-
-    @property
-    @abstractmethod
-    def winner(self) -> Party: ...
+    winner: Party = Party.noone
 
 
 @dataclass(frozen=True)
